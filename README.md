@@ -21,7 +21,7 @@ Example of response:
 ```json
 {
   "jsonrpc": "2.0",
-  "id": 2,
+  "id": 1,
   "result": "2525.37222247"
 }
 ```
