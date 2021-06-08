@@ -1,0 +1,38 @@
+workers_dev = true
+type = "javascript"
+name = "beth-price-feed-dev"
+account_id = ""
+
+[vars]
+ENV = "development"
+SENTRY_PROJECT_ID = ""
+SENTRY_KEY = ""
+
+[build]
+command = "npm run build"
+
+[build.upload]
+format = "service-worker"
+
+
+[env.staging]
+workers_dev = false
+name = "beth-price-feed-staging"
+route = ""
+zone_id = ""
+
+[env.staging.vars]
+ENV = "staging"
+SENTRY_PROJECT_ID = ""
+SENTRY_KEY = ""
+
+[env.production]
+workers_dev = false
+name = "beth-price-feed"
+route = ""
+zone_id = ""
+
+[env.production.vars]
+ENV = "production"
+SENTRY_PROJECT_ID = ""
+SENTRY_KEY = ""

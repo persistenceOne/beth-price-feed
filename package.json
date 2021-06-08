@@ -1,0 +1,22 @@
+{
+  "private": true,
+  "name": "beth-price-feed",
+  "version": "1.0.0",
+  "description": "bETH/USD JSON-RPC Price Feed",
+  "main": "./dist/worker.js",
+  "scripts": {
+    "format": "prettier --write '**/*.{js,css,json,md}'",
+    "build": "esbuild ./src/index.js --bundle --outfile=./dist/worker.js --platform=node"
+  },
+  "author": "Bogdan Kovtun <psirex48@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "esbuild": "^0.12.7",
+    "eslint": "^7.28.0",
+    "prettier": "^1.18.2"
+  },
+  "dependencies": {
+    "bignumber.js": "^9.0.1",
+    "jsonrpc-lite": "^2.2.0"
+  }
+}
