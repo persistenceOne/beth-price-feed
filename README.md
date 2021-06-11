@@ -60,3 +60,12 @@ To start a local server for developing your worker run `wrangler dev`.
 ### Deployment
 
 To deploy build run `wrangler publish --env ENVIRONMENT_NAME`, where `ENVIRONMENT_NAME` one of `staging`, `production`
+
+#### publish helper `bash` script
+
+To make it easier to publish the worker:
+
+- copy `sample.env` to `.env`, change the values
+- fill all described above config settings in `wrangler.toml`
+- to publish in staging environment - run the `./publish.sh` script without params
+- run `./publish.sh production` script to publish in production
