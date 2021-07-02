@@ -13,6 +13,7 @@
     "SENTRY_PROJECT_ID": "readonly",
     "SENTRY_KEY": "readonly",
     "ENV": "readonly",
-    "ETH_RPCS": "readonly"
+    "ETH_RPCS": "readonly",
+    "CHAIN_ID": "readonly"
   }
 }

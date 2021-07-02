@@ -4,6 +4,7 @@ name = "beth-price-feed-dev"
 account_id = ""
 
 [vars]
+CHAIN_ID = 1
 ENV = "development"
 SENTRY_PROJECT_ID = ""
 SENTRY_KEY = ""
@@ -22,6 +23,7 @@ route = ""
 zone_id = ""
 
 [env.staging.vars]
+CHAIN_ID = 1
 ENV = "staging"
 SENTRY_PROJECT_ID = ""
 SENTRY_KEY = ""
@@ -33,6 +35,7 @@ route = ""
 zone_id = ""
 
 [env.production.vars]
+CHAIN_ID = 1
 ENV = "production"
 SENTRY_PROJECT_ID = ""
 SENTRY_KEY = ""

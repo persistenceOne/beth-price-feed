@@ -25,7 +25,7 @@ export async function ethCall(params) {
 }
 
 /**
- * Provides convinient interface to make request to list of nodes.
+ * Provides convenient interface to make request to list of nodes.
  * Takes API urls one by one and returns first successfull response.
  * If some of requests fails will report error with information about fail to the Sentry.
  * If all requests fail throws AllApiEndpointsFailedError
