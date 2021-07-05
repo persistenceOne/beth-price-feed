@@ -27,18 +27,13 @@ describe('Test bEthPrice method', function() {
   before(async () => {
     const provider = new providers.JsonRpcProvider(ETH_RPC_NODE)
     signer = await provider.getSigner(0)
-    const AnchorVaultFactory = ContractFactory.fromSolidity(
-      AnchorVaultStub,
-      signer,
-    )
-    anchorVaultStub = await AnchorVaultFactory.deploy()
-    const CurvePoolFactory = ContractFactory.fromSolidity(CurvePoolStub, signer)
-    curvePoolStub = await CurvePoolFactory.deploy()
-    const ChainLinkEthUsdPriceFeedFactory = ContractFactory.fromSolidity(
-      ChainLinkEthUsdPriceFeedStub,
-      signer,
-    )
-    chainLinkEthUsdPriceFeedStub = await ChainLinkEthUsdPriceFeedFactory.deploy()
+
+    const deployedContractStubs = await deployContractStubs(signer)
+    curvePoolStub = deployedContractStubs.curvePoolStub
+    anchorVaultStub = deployedContractStubs.anchorVaultStub
+    chainLinkEthUsdPriceFeedStub =
+      deployedContractStubs.chainLinkEthUsdPriceFeedStub
+
     setGlobals({ ethRpcs: [ETH_RPC_NODE] })
     setContractAddresses({
       curvePoolAddress: curvePoolStub.address,
@@ -75,6 +70,38 @@ describe('Test bEthPrice method', function() {
     }
   })
 })
+
+// Deploys stubs of real contracts used in method bEthPrice().
+// Stubs has one required method used in calculation:
+// - AnchorVaultStub - get_rate()
+// - CurvePoolStubFactory - get_dy(i,j,dx)
+// - ChainLinkEthUsdPriceFeedStubFactory - latestAnswer()
+// additionally every contract has helper method setValue(newValue) to
+// set returning value of contract and view value() to retrieve current value
+const deployContractStubs = async signer => {
+  const AnchorVaultStubFactory = ContractFactory.fromSolidity(
+    AnchorVaultStub,
+    signer,
+  )
+  const CurvePoolStubFactory = ContractFactory.fromSolidity(
+    CurvePoolStub,
+    signer,
+  )
+  const ChainLinkEthUsdPriceFeedStubFactory = ContractFactory.fromSolidity(
+    ChainLinkEthUsdPriceFeedStub,
+    signer,
+  )
+  const [
+    anchorVaultStub,
+    curvePoolStub,
+    chainLinkEthUsdPriceFeedStub,
+  ] = await Promise.all([
+    AnchorVaultStubFactory.deploy(),
+    CurvePoolStubFactory.deploy(),
+    ChainLinkEthUsdPriceFeedStubFactory.deploy(),
+  ])
+  return { anchorVaultStub, curvePoolStub, chainLinkEthUsdPriceFeedStub }
+}
 
 const bigRandom = (min, max) => {
   const rangeLength = BigNumber(max).minus(min)
