@@ -5,7 +5,15 @@ Price feed built as Cloudflare's worker.
 
 ## Overview
 
-Worker contains `currentPrice` method which returns current bETH price in USD. To calculate result methods retrieves current ETH price in USD via chainlink's ETH/USD contract and current stETH/ETH peg from Curve's pool contract and returns product of above values rounded to 8 decimal places. Feed can use multiple Ethereum JSON-RPC nodes to improve fault-tolerance.
+Worker contains `currentPrice` method which returns current bETH price in USD rounded to 8 decimal places.
+
+bETH price calculation based on a next formula: `bETHPrice = ethPrice * stETHRate / bETHRate`, where:
+
+- `ethPrice` - current ETH price in USD, retrieved from chainlink's ETH/USD contract
+- `stETHRate` - current stETH/ETH rate, retrieved from Curve's pool contract
+- `bETHRate` - current bETH/stETH rate, retrieved from AnchorVault contract. Value always greater or equal than 1.
+
+Feed can use multiple Ethereum JSON-RPC nodes to improve fault-tolerance.
 
 Example of request:
 
@@ -69,3 +77,10 @@ To make it easier to publish the worker:
 - fill all described above config settings in `wrangler.toml`
 - to publish in staging environment - run the `./publish.sh` script without params
 - run `./publish.sh production` script to publish in production
+
+### Testing
+
+To run tests:
+
+- Run local Ethereum RPC node on address: `http://127.0.0.1:8545/`. For example: `npx hardhat node`.
+- In other console run command: `npm run test`

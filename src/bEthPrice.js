@@ -66,7 +66,7 @@ export function setContractAddresses(addresses) {
  * Under the hood makes RPC requests to the ChainLink ETH/USD pair to retrieve
  * current ETH price in USD and calls the Curve stETH pool to get current rate
  * of stETH/ETH pair and calls AnchorVaults' get_rate() method to get current stETH/bETH rate.
- * Returns product of the peg and ETH price in used divided by bETH/stETH rate rounded to 8 digits.
+ * Returns product of the stETH/ETH rate and ETH price in used divided by bETH/stETH rate rounded to 8 digits.
  * @returns current price of bETH token
  */
 export async function bEthPrice() {
