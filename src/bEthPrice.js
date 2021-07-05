@@ -1,6 +1,65 @@
 import BigNumber from 'bignumber.js'
 import { Contract } from './Contract'
-import { CHAIN_IDS } from './constants'
+
+const CurvePoolFactory = address =>
+  new Contract({
+    address,
+    abi: [
+      {
+        name: 'get_dy',
+        outputs: [{ type: 'uint256', name: '' }],
+        inputs: [
+          { type: 'int128', name: 'i' },
+          { type: 'int128', name: 'j' },
+          { type: 'uint256', name: 'dx' },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+      },
+    ],
+  })
+
+const ChainLinkEthUsdPriceFeedFactory = address =>
+  new Contract({
+    address,
+    abi: [
+      {
+        inputs: [],
+        name: 'latestAnswer',
+        outputs: [{ internalType: 'int256', name: '', type: 'int256' }],
+        stateMutability: 'view',
+        type: 'function',
+      },
+    ],
+  })
+
+const AnchorVaultFactory = address =>
+  new Contract({
+    address,
+    abi: [
+      {
+        stateMutability: 'view',
+        type: 'function',
+        name: 'get_rate',
+        inputs: [],
+        outputs: [{ name: '', type: 'uint256' }],
+      },
+    ],
+  })
+
+let CurvePool = CurvePoolFactory('0xDC24316b9AE028F1497c275EB9192a3Ea0f67022')
+let ChainLinkEthUsdPriceFeed = ChainLinkEthUsdPriceFeedFactory(
+  '0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419',
+)
+let AnchorVault = AnchorVaultFactory('') // TODO: Add address of contract in mainnet
+
+export function setContractAddresses(addresses) {
+  CurvePool = CurvePoolFactory(addresses.curvePoolAddress)
+  ChainLinkEthUsdPriceFeed = ChainLinkEthUsdPriceFeedFactory(
+    addresses.chainLinkEthUsdPriceFeedAddress,
+  )
+  AnchorVault = AnchorVaultFactory(addresses.anchorVault)
+}
 
 /**
  * Provides current price of bEth token.
@@ -11,14 +70,14 @@ import { CHAIN_IDS } from './constants'
  * @returns current price of bETH token
  */
 export async function bEthPrice() {
-  const [peg, price, bEthRate] = await Promise.all([
-    getStEthEthPeg(),
+  const [ethPrice, stEthRate, bEthRate] = await Promise.all([
     getEthPrice(),
+    getStEthEthRate(),
     getBEthRate(),
   ])
-  return peg
-    .multipliedBy(price)
-    .div(bEthRate)
+  return ethPrice
+    .multipliedBy(stEthRate)
+    .dividedBy(bEthRate)
     .toFixed(8)
 }
 
@@ -26,13 +85,13 @@ export async function bEthPrice() {
  * Calls method get_dy(1, 0, 1e18) on curve contract to get current price in ETH of one stETH token
  * @returns Current stETH/ETH rate
  */
-async function getStEthEthPeg() {
-  const [pegInWei] = await CurvePool.makeCall(CHAIN_ID, 'get_dy', [
+async function getStEthEthRate() {
+  const [pegInWei] = await CurvePool.makeCall('get_dy', [
     1,
     0,
     (1e18).toFixed(), // convert to String to except Number overflow error in ethers BigNumber library.
   ])
-  return new BigNumber(pegInWei).div(1e18)
+  return new BigNumber(pegInWei.toString()).div(1e18)
 }
 
 /**
@@ -40,11 +99,7 @@ async function getStEthEthPeg() {
  * @returns Current ETH price in USD rounded to 8 digits
  */
 async function getEthPrice() {
-  const [latestAnswer] = await ChainLinkEthUsdPriceFeed.makeCall(
-    CHAIN_ID,
-    'latestAnswer',
-    [],
-  )
+  const [latestAnswer] = await ChainLinkEthUsdPriceFeed.makeCall('latestAnswer')
   return new BigNumber(latestAnswer.toString()).div(1e8)
 }
 
@@ -53,58 +108,6 @@ async function getEthPrice() {
  * @returns Current stETH/bETH rate. The result is always greater or equal than 1.
  */
 async function getBEthRate() {
-  const [rateInWei] = await AnchorVault.makeCall(CHAIN_ID, 'get_rate', [])
+  const [rateInWei] = await AnchorVault.makeCall('get_rate')
   return new BigNumber(rateInWei.toString()).div(1e18)
 }
-
-const CurvePool = new Contract({
-  addresses: {
-    [CHAIN_IDS.mainnet]: '0xDC24316b9AE028F1497c275EB9192a3Ea0f67022',
-    [CHAIN_IDS.goerli]: '0xCEB67769c63cfFc6C8a6c68e85aBE1Df396B7aDA',
-  },
-  abi: [
-    {
-      name: 'get_dy',
-      outputs: [{ type: 'uint256', name: '' }],
-      inputs: [
-        { type: 'int128', name: 'i' },
-        { type: 'int128', name: 'j' },
-        { type: 'uint256', name: 'dx' },
-      ],
-      stateMutability: 'view',
-      type: 'function',
-    },
-  ],
-})
-
-const ChainLinkEthUsdPriceFeed = new Contract({
-  addresses: {
-    [CHAIN_IDS.mainnet]: '0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419',
-    [CHAIN_IDS.rinkeby]: '0x8A753747A1Fa494EC906cE90E9f37563A8AF630e',
-    [CHAIN_IDS.kovan]: '0x9326BFA02ADD2366b30bacB125260Af641031331',
-  },
-  abi: [
-    {
-      inputs: [],
-      name: 'latestAnswer',
-      outputs: [{ internalType: 'int256', name: '', type: 'int256' }],
-      stateMutability: 'view',
-      type: 'function',
-    },
-  ],
-})
-
-const AnchorVault = new Contract({
-  addresses: {
-    [CHAIN_IDS.ropsten]: '0xf72B5bC0a05f15CaDB6731e59C7D99C1bFbB2FAb',
-  },
-  abi: [
-    {
-      stateMutability: 'view',
-      type: 'function',
-      name: 'get_rate',
-      inputs: [],
-      outputs: [{ name: '', type: 'uint256' }],
-    },
-  ],
-})

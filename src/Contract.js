@@ -2,21 +2,15 @@ import { ethCall } from './ethNodeRpc'
 import { Interface } from '@ethersproject/abi'
 
 export class Contract {
-  constructor({ addresses, abi }) {
-    this.addresses = addresses
+  constructor({ address, abi }) {
+    this.address = address
     this.interface = new Interface(abi)
   }
 
-  async makeCall(chainId, methodName, params) {
-    const address = this.addresses[chainId]
-    if (!address) {
-      throw new Error(
-        `Address of contract not provided for chain id = ${chainId}`,
-      )
-    }
+  async makeCall(methodName, params = []) {
     const res = await ethCall([
       {
-        to: address,
+        to: this.address,
         data: this.interface.encodeFunctionData(methodName, params),
       },
       'latest',

@@ -1,10 +1,10 @@
+import { globals } from './globals'
 /**
  * Copied from: https://github.com/bustle/cf-sentry/blob/master/sentry.js
  */
-
 const APP = 'beth-price-feed'
 const TAGS = { app: APP }
-const SERVER_NAME = `${APP}-${ENV}`
+let SERVER_NAME = () => `${APP}-${globals.env}`
 
 // Indicates the name of the SDK client
 const CLIENT_NAME = 'bustle-cf-sentry'
@@ -16,7 +16,7 @@ export async function log(err, request) {
 
   for (let i = 0; i <= RETRIES; i++) {
     const res = await fetch(
-      `https://sentry.io/api/${SENTRY_PROJECT_ID}/store/`,
+      `https://sentry.io/api/${globals.sentryProjectId}/store/`,
       {
         method: 'POST',
         headers: {
@@ -24,7 +24,7 @@ export async function log(err, request) {
           'X-Sentry-Auth': [
             'Sentry sentry_version=7',
             `sentry_client=${CLIENT_NAME}/${CLIENT_VERSION}`,
-            `sentry_key=${SENTRY_KEY}`,
+            `sentry_key=${globals.sentryKey}`,
           ].join(', '),
         },
         body,
@@ -66,8 +66,8 @@ function toSentryEvent(err, request) {
       : undefined,
     tags: TAGS,
     platform: 'javascript',
-    environment: ENV,
-    server_name: SERVER_NAME,
+    environment: globals.env,
+    server_name: SERVER_NAME(),
     timestamp: Date.now() / 1000,
     request:
       request && request.url
