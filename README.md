@@ -55,11 +55,13 @@ Navigate to root directory of the project and run `npm install` command
 
 ### Setup Environment variables
 
-1. Run `wrangler secret put ETH_RPCS --env ENVIRONMENT_NAME` command to set list of Ethereum JSON-RPC URLs. Example of variable format: `["https://eth-mainnet.alchemyapi.io/v2/foo","https://mainnet.infura.io/v3/baz"]`. `--env` might be one of `staging`, `production`. If omitted would be used development environment.
+1. Run `wrangler build` to add encrypted env variables.
 
-2. Fill values `SENTRY_PORJECT_ID` and `SENTRY_KEY` in `wrangler.toml` file to activate errors reporting via Sentry. This variables might be get from from the "DSN". The "DSN" will be in the form: `https://<SENTRY_KEY>@sentry.io/<SENTRY_PROJECT_ID>`. DSN might be found in the Sentry project settings.
+2. Run `wrangler secret put ETH_RPCS --env ENVIRONMENT_NAME` command to set list of Ethereum JSON-RPC URLs. Example of variable format: `["https://eth-mainnet.alchemyapi.io/v2/foo","https://mainnet.infura.io/v3/baz"]`. `--env` might be one of `staging`, `production`. If omitted would be used development environment.
 
-3. Fill `zone_id` and `route` to publish `staging`/`production` builds. See [deployment instructions](https://developers.cloudflare.com/workers/get-started/guide#7-configure-your-project-for-deployment) for more details. This step might be skipped if only local development supposed.
+3. Fill values `SENTRY_PORJECT_ID` and `SENTRY_KEY` in `wrangler.toml` file to activate errors reporting via Sentry. This variables might be get from from the "DSN". The "DSN" will be in the form: `https://<SENTRY_KEY>@sentry.io/<SENTRY_PROJECT_ID>`. DSN might be found in the Sentry project settings.
+
+4. Fill `zone_id` and `route` to publish `staging`/`production` builds. See [deployment instructions](https://developers.cloudflare.com/workers/get-started/guide#7-configure-your-project-for-deployment) for more details. This step might be skipped if only local development supposed.
 
 ### Development Server
 
