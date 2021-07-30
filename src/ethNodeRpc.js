@@ -1,5 +1,6 @@
 import jsonrpc from 'jsonrpc-lite'
 import { log } from './sentry'
+import { globals } from './globals'
 
 /**
   Makes eth_call JSON RPC request to ethereum etnode.
@@ -25,22 +26,17 @@ export async function ethCall(params) {
 }
 
 /**
- * Provides convinient interface to make request to list of nodes.
+ * Provides convenient interface to make request to list of nodes.
  * Takes API urls one by one and returns first successfull response.
  * If some of requests fails will report error with information about fail to the Sentry.
  * If all requests fail throws AllApiEndpointsFailedError
  */
 const apiEndpoints = {
-  _endpoints: [],
   getEndpoints() {
-    if (this._endpoints.length > 0) {
-      return this._endpoints
-    }
-    this._endpoints = JSON.parse(ETH_RPCS)
-    if (this._endpoints === 0) {
+    if (globals.ethRpcs.length === 0) {
       throw new Error('API endpoints not provided!')
     }
-    return this._endpoints
+    return globals.ethRpcs
   },
   async makeRequest(payload) {
     const endpoints = this.getEndpoints()
