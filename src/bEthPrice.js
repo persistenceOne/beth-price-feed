@@ -51,7 +51,9 @@ let CurvePool = CurvePoolFactory('0xDC24316b9AE028F1497c275EB9192a3Ea0f67022')
 let ChainLinkEthUsdPriceFeed = ChainLinkEthUsdPriceFeedFactory(
   '0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419',
 )
-let AnchorVault = AnchorVaultFactory('') // TODO: Add address of contract in mainnet
+let AnchorVault = AnchorVaultFactory(
+  '0xA2F987A546D4CD1c607Ee8141276876C26b72Bdf',
+)
 
 export function setContractAddresses(addresses) {
   CurvePool = CurvePoolFactory(addresses.curvePoolAddress)
