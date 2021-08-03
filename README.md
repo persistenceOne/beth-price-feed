@@ -9,9 +9,9 @@ Worker contains `currentPrice` method which returns current bETH price in USD ro
 
 bETH price calculation based on a next formula: `bETHPrice = ethPrice * stETHRate / bETHRate`, where:
 
-- `ethPrice` - current ETH price in USD, retrieved from chainlink's ETH/USD contract
-- `stETHRate` - current stETH/ETH rate, retrieved from Curve's pool contract
-- `bETHRate` - current bETH/stETH rate, retrieved from AnchorVault contract. Value always greater or equal than 1.
+- `ethPrice` - current ETH/USD price retrieved from the Chainlink's ETH/USD feed contract
+- `stETHRate` - current stETH/ETH spot price retrieved from the Curve stETH pool contract
+- `bETHRate` - current stETH/bETH rate retrieved from the AnchorVault contract. Always greater than or equal 1.
 
 Feed can use multiple Ethereum JSON-RPC nodes to improve fault-tolerance.
 
