@@ -8,6 +8,7 @@ wasm-pack.log
 worker/
 node_modules/
 .cargo-ok
+.nyc_output/
 
 .DS_Store
 .vscode
