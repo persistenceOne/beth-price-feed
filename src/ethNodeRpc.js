@@ -25,6 +25,21 @@ export async function ethCall(params) {
   return result
 }
 
+export async function ethBlockNumber() {
+  const response = await apiEndpoints.makeRequest({
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(jsonrpc.request(1, 'eth_blockNumber')),
+  })
+  const { result, error } = await response.json()
+  if (error) {
+    throw new EthCallError([], error)
+  }
+  return result
+}
+
 /**
  * Provides convenient interface to make request to list of nodes.
  * Takes API urls one by one and returns first successfull response.
