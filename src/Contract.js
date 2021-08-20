@@ -7,13 +7,13 @@ export class Contract {
     this.interface = new Interface(abi)
   }
 
-  async makeCall(methodName, params = []) {
+  async makeCall(methodName, params = [], blockNumber = 'latest') {
     const res = await ethCall([
       {
         to: this.address,
         data: this.interface.encodeFunctionData(methodName, params),
       },
-      'latest',
+      blockNumber,
     ])
     return this.interface.decodeFunctionResult(methodName, res)
   }

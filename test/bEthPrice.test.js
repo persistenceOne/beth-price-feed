@@ -2,7 +2,7 @@ import assert from 'assert'
 import fetch from 'node-fetch'
 import BigNumber from 'bignumber.js'
 
-import { bEthPrice, setContractAddresses } from '../src/bEthPrice.js'
+import { bEthPriceSafe, setContractAddresses } from '../src/bEthPrice.js'
 import { setGlobals } from '../src/globals'
 import { ContractFactory, providers } from 'ethers'
 import AnchorVaultStub from './contracts/AnchorVaultStub.json'
@@ -61,7 +61,7 @@ describe('Test bEthPrice method', function() {
         anchorVaultStub.setValue(testCase.rate),
       ])
       const expectedResult = bEthPriceFormula(testCase)
-      const actualResult = await bEthPrice()
+      const actualResult = await bEthPriceSafe()
       console.log('Result Value:', actualResult)
       console.log('Expected Value:', expectedResult)
       console.log()

@@ -1,5 +1,7 @@
 import BigNumber from 'bignumber.js'
 import { Contract } from './Contract'
+import { ethBlockNumber } from './ethNodeRpc'
+import { globals } from './globals'
 
 const CurvePoolFactory = address =>
   new Contract({
@@ -71,28 +73,57 @@ export function setContractAddresses(addresses) {
  * Returns product of the stETH/ETH rate and ETH price in used divided by bETH/stETH rate rounded to 8 digits.
  * @returns current price of bETH token
  */
-export async function bEthPrice() {
-  const [ethPrice, stEthRate, bEthRate] = await Promise.all([
-    getEthPrice(),
-    getStEthEthRate(),
-    getBEthRate(),
+export async function bEthPriceSafe() {
+  const { deviationBlockOffsets, bEthSafePriceValidator } = globals
+  const [currentPriceInfo, currentBlockHex] = await Promise.all([
+    bEthPriceInfo(),
+    ethBlockNumber(),
   ])
-  return ethPrice
-    .multipliedBy(stEthRate)
-    .dividedBy(bEthRate)
-    .toFixed(8)
+  const referenceValues = await Promise.all(
+    deviationBlockOffsets
+      .map(offset => currentBlockHex - offset)
+      .map(async blockNumber => [
+        blockNumber,
+        await bEthPriceInfo('0x' + blockNumber.toString(16)),
+      ]),
+  )
+  bEthSafePriceValidator.validate(
+    Number(currentBlockHex),
+    currentPriceInfo,
+    referenceValues,
+  )
+  return currentPriceInfo.bEthPrice.toFixed(8)
+}
+
+async function bEthPriceInfo(blockNumber) {
+  const [ethPrice, stEthRate, bEthRate] = await Promise.all([
+    getEthPrice(blockNumber),
+    getStEthEthRate(blockNumber),
+    getBEthRate(blockNumber),
+  ])
+
+  return {
+    ethPrice,
+    stEthRate,
+    bEthRate,
+    bEthPrice: ethPrice.multipliedBy(stEthRate).dividedBy(bEthRate),
+  }
 }
 
 /**
  * Calls method get_dy(1, 0, 1e18) on curve contract to get current price in ETH of one stETH token
  * @returns Current stETH/ETH rate
  */
-async function getStEthEthRate() {
-  const [pegInWei] = await CurvePool.makeCall('get_dy', [
-    1,
-    0,
-    (1e18).toFixed(), // convert to String to except Number overflow error in ethers BigNumber library.
-  ])
+async function getStEthEthRate(blockNumber) {
+  const [pegInWei] = await CurvePool.makeCall(
+    'get_dy',
+    [
+      1,
+      0,
+      (1e18).toFixed(), // convert to String to except Number overflow error in ethers BigNumber library.
+    ],
+    blockNumber,
+  )
   return new BigNumber(pegInWei.toString()).div(1e18)
 }
 
@@ -100,8 +131,12 @@ async function getStEthEthRate() {
  * Calls method latestAnswer on ChainLink contract with ETH/USD pair
  * @returns Current ETH price in USD rounded to 8 digits
  */
-async function getEthPrice() {
-  const [latestAnswer] = await ChainLinkEthUsdPriceFeed.makeCall('latestAnswer')
+async function getEthPrice(blockNumber) {
+  const [latestAnswer] = await ChainLinkEthUsdPriceFeed.makeCall(
+    'latestAnswer',
+    [],
+    blockNumber,
+  )
   return new BigNumber(latestAnswer.toString()).div(1e8)
 }
 
@@ -109,7 +144,7 @@ async function getEthPrice() {
  * Calls method get_rate on AnchorVault contract.
  * @returns Current stETH/bETH rate. The result is always greater or equal than 1.
  */
-async function getBEthRate() {
-  const [rateInWei] = await AnchorVault.makeCall('get_rate')
+async function getBEthRate(blockNumber) {
+  const [rateInWei] = await AnchorVault.makeCall('get_rate', [], blockNumber)
   return new BigNumber(rateInWei.toString()).div(1e18)
 }
