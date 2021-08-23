@@ -72,6 +72,67 @@ BETH_PRICE_LIMITS = '{"maxValue":3100,"minValue":"3000","deviations":[20.5,15,5]
 
 which requires that the value `bETHPrice` variable contains in the range [3000,3100], and deviation from reference blocks less than 20.5 % for value with zero index, 15 with index equal to one, and 5 % with index three.
 
+When some validation of price safety fails, an error will be returned instead of a default response.
+
+Example of response with an error when `bETHPrice`'s max value validation failed:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": null,
+  "error": {
+    "message": "Unsafe Price: value of \"bEthPrice\" too high",
+    "code": -40001,
+    "data": {
+      "maxValue": "3100",
+      "currentValue": "3324.64747392728265104149"
+    }
+  }
+}
+```
+
+Example of response with an error when `bETHPrice`'s min value validation failed:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": null,
+  "error": {
+    "message": "Unsafe Price: value of \"bEthPrice\" too low",
+    "code": -40002,
+    "data": {
+      "minValue": "3400",
+      "currentValue": "3324.8884429858988432267"
+    }
+  }
+}
+```
+
+Example of response with an error when `bETHPrice`'s max deviation validation failed:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": null,
+  "error": {
+    "message": "Unsafe Price: Max deviation of \"bEthPrice\" exceeded",
+    "code": -40003,
+    "data": {
+      "maxDeviation": "2",
+      "currentDeviation": "4.278974120495502111",
+      "currentValue": {
+        "block": 13082521,
+        "value": "3324.64747392728265104149"
+      },
+      "referenceValue": {
+        "block": 13076121,
+        "value": "3182.38666892022678037954"
+      }
+    }
+  }
+}
+```
+
 ## Development And Deployment
 
 Requirements:
