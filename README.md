@@ -34,6 +34,44 @@ Example of response:
 }
 ```
 
+## bETH Safe Price Validation
+
+For the resulting bETH price value (`bETHPrice`) and for each value of: `ethPrice`, `stETHRate`, `bETHRate` might be added validations to check that values belong to the allowed range. For each of the above values might be set next validations:
+
+- `maxValue` - maximum value which might be reached
+- `minValue` - minimum value which might be reached
+- `maxDeviations` - an array of max deviations in percent. Each element will be compared to element from reference values array at the same index.
+
+Reference values - it's an array of values of `bETHPrice`, `ethPrice`, `stETHRate` and `bETHRate` taken from different blocks. The number of such reference values and block numbers where to retrieve values from might be set via ENV variable `DEVIATION_BLOCK_OFFSETS` in wrangler.toml file.
+`DEVIATION_BLOCK_OFFSETS` must contain a valid JSON array of numbers (empty array is allowed).
+
+Example of `DEVIATION_BLOCK_OFFSETS` value: `[10000, 1000, 100]` - use three points as reference values, with block numbers: `[currentBlockNumber - 10000, currentBlockNumber - 1000, currentBlockNumber - 100]`.
+
+Validations for values `bETHPrice`, `ethPrice`, `stETHRate` and `bETHRate` might be set via next corresponding ENV variables in wrangler.toml file:
+
+- `BETH_RATE_LIMITS`
+- `BETH_PRICE_LIMITS`
+- `STETH_RATE_LIMITS`
+- `ETH_PRICE_LIMITS`
+
+Each of these variables must contain a valid JSON string of next type:
+
+```typescript
+{
+  maxValue?: number | string;
+  minValue?: number | string;
+  deviations: (number | string)[];
+}
+```
+
+Example of declaration of validations for `BETH_PRICE_LIMITS` in wrangler.toml file:
+
+```
+BETH_PRICE_LIMITS = '{"maxValue":3100,"minValue":"3000","deviations":[20.5,15,5]}'
+```
+
+which requires that the value `bETHPrice` variable contains in the range [3000,3100], and deviation from reference blocks less than 20.5 % for value with zero index, 15 with index equal to one, and 5 % with index three.
+
 ## Development And Deployment
 
 Requirements:
