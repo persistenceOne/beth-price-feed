@@ -1,6 +1,6 @@
 import { bEthPriceSafe } from './bEthPrice'
 import { handleJsonRpcRequests } from './JsonRpcRequestsHandler'
-import { globals, setGlobals } from './globals'
+import { setGlobals } from './globals'
 
 let ethRPCs = []
 // Before adding new encrypted env variable to cloudflare
