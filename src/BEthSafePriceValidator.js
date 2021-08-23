@@ -1,7 +1,9 @@
 import BigNumber from 'bignumber.js'
 
 const ERROR_CODES = {
-  PRICE_UNSAFE: -40000,
+  VALUE_TOO_HIGH: -40001,
+  VALUE_TOO_LOW: -40002,
+  DEVIATION_TOO_HIGH: -40003,
 }
 
 const ASSET_NAMES = ['bEthPrice', 'bEthRate', 'stEthRate', 'ethPrice']
@@ -183,7 +185,7 @@ export class AssetSafeValueLimitValidator {
 export class ValueTooHighError extends Error {
   constructor(name, maxValue, currentValue) {
     super(`Unsafe Price: value of "${name}" too high`)
-    this.code = ERROR_CODES.PRICE_UNSAFE
+    this.code = ERROR_CODES.VALUE_TOO_HIGH
     this.data = {
       maxValue: maxValue.toString(),
       currentValue: currentValue.toString(),
@@ -194,7 +196,7 @@ export class ValueTooHighError extends Error {
 export class ValueTooLowError extends Error {
   constructor(name, minValue, currentValue) {
     super(`Unsafe Price: value of "${name}" too low`)
-    this.code = ERROR_CODES.PRICE_UNSAFE
+    this.code = ERROR_CODES.VALUE_TOO_LOW
     this.data = {
       minValue: minValue.toString(),
       currentValue: currentValue.toString(),
@@ -213,7 +215,7 @@ export class MaxDeviationError extends Error {
     currentValue,
   ) {
     super(`Unsafe Price: Max deviation of "${name}" exceeded`)
-    this.code = ERROR_CODES.PRICE_UNSAFE
+    this.code = ERROR_CODES.DEVIATION_TOO_HIGH
     this.data = {
       maxDeviation: maxDeviation.toString(),
       currentDeviation: currentDeviation.toString(),
