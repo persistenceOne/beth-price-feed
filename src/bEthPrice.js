@@ -66,11 +66,8 @@ export function setContractAddresses(addresses) {
 }
 
 /**
- * Provides current price of bEth token.
- * Under the hood makes RPC requests to the ChainLink ETH/USD pair to retrieve
- * current ETH price in USD and calls the Curve stETH pool to get current rate
- * of stETH/ETH pair and calls AnchorVaults' get_rate() method to get current stETH/bETH rate.
- * Returns product of the stETH/ETH rate and ETH price in used divided by bETH/stETH rate rounded to 8 digits.
+ * Provides current price of bEth token with safety validations.
+ * Validations are defined via globals variable. In case of unsafe price throws an error.
  * @returns current price of bETH token
  */
 export async function bEthPriceSafe() {
@@ -95,6 +92,13 @@ export async function bEthPriceSafe() {
   return currentPriceInfo.bEthPrice.toFixed(8)
 }
 
+/**
+ * Makes RPC requests to the ChainLink ETH/USD pair to retrieve
+ * current ETH price in USD (ethPrice) and calls the Curve stETH pool to get current rate
+ * of stETH/ETH pair (stEthRate) and calls AnchorVaults' get_rate() method to get current stETH/bETH rate (bEthRate).
+ * Calculates bEthPrice as product of the stETH/ETH rate and ETH price in USD divided by bETH/stETH rate
+ * @returns current object contained keys: ethPrice, stEthRate, bEthRate, bEthPrice, which have type BigNumber.
+ */
 async function bEthPriceInfo(blockNumber) {
   const [ethPrice, stEthRate, bEthRate] = await Promise.all([
     getEthPrice(blockNumber),

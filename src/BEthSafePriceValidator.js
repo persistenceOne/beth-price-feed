@@ -6,8 +6,35 @@ const ERROR_CODES = {
 
 const ASSET_NAMES = ['bEthPrice', 'bEthRate', 'stEthRate', 'ethPrice']
 
+/**
+ * Validates info about bETH price: ethPrice, stEthRate, bEthRate, bEthPrice
+ * according to passed config in the constructor.
+ */
 export class BEthSafePriceValidator {
-  constructor({ deviationBlockOffsets = [], ...limits } = {}) {
+  /**
+   * Creates new instance of BEthSafePriceValidator.
+   * @param config - validation rules to be applied
+   * @param config.deviationBlockOffsets - contains offsets of blocks
+   *  where bEth price info in reference values were retrieved from
+   * @param config.bEthPrice - contains validations for bEthPrice in bEth price info
+   * @param config.bEthPrice.maxValue - upper bound for bEthPrice. Number.POSITIVE_INFINITY by default.
+   * @param config.bEthPrice.minValue - lower bound for bEthPrice. Number.NEGATIVE_INFINITY by default.
+   * @param config.bEthPrice.deviations - array of max deviations for bEthPrice relatively to reference value at position with same index.
+   * @param config.bEthRate - contains validations for bEthRate in bEth price info
+   * @param config.bEthRate.maxValue - upper bound for bEthRate. Number.POSITIVE_INFINITY by default.
+   * @param config.bEthRate.minValue - lower bound for bEthRate. Number.NEGATIVE_INFINITY by default.
+   * @param config.bEthRate.deviations - array of max deviations for bEthRate relatively to reference value at position with same index.
+   * @param config.stEthRate - contains validations for stEthRate in bEth price info
+   * @param config.stEthRate.maxValue - upper bound for stEthRate. Number.POSITIVE_INFINITY by default.
+   * @param config.stEthRate.minValue - lower bound for stEthRate. Number.NEGATIVE_INFINITY by default.
+   * @param config.stEthRate.deviations - array of max deviations for stEthRate relatively to reference value at position with same index.
+   * @param config.ethPrice - contains validations for ethPrice in bEth price info
+   * @param config.ethPrice.maxValue - upper bound for ethPrice. Number.POSITIVE_INFINITY by default.
+   * @param config.ethPrice.minValue - lower bound for ethPrice. Number.NEGATIVE_INFINITY by default.
+   * @param config.ethPrice.deviations - array of max deviations for ethPrice relatively to reference value at position with same index.
+   */
+  constructor(config = {}) {
+    const { deviationBlockOffsets = [], ...limits } = config
     this.deviationBlockOffsets = deviationBlockOffsets
     this.validators = {}
     for (const assetName of ASSET_NAMES) {
@@ -18,6 +45,13 @@ export class BEthSafePriceValidator {
     }
   }
 
+  /**
+   * Makes validation of bETH price info.
+   * @param valueBlockNumber - number of block where value was retrieved from
+   * @param value - bETH price info
+   * @param referenceValues - array of bETH price info which used as reference
+   * values to calculate deviations of current price
+   */
   validate(valueBlockNumber, value, referenceValues) {
     for (const assetName of Object.keys(value)) {
       const assertReferenceValues = referenceValues.map(
@@ -41,8 +75,21 @@ export class BEthSafePriceValidator {
   }
 }
 
+/**
+ * Validates one part of bETH price info
+ * according to passed config in the constructor.
+ */
 export class AssetSafeValueLimitValidator {
-  constructor(name, { maxValue, minValue, deviations } = {}) {
+  /**
+   * Creates new instance of AssetSafeValueLimitValidator
+   * @param name - name of part of bETH price. Might be one of ethPrice, stEthRate, bEthRate, bEthPrice.
+   * @param config - validation rules
+   * @param config.maxValue - upper bound for value. Number.POSITIVE_INFINITY by default.
+   * @param config.minValue - lower bound for value.  Number.NEGATIVE_INFINITY by default.
+   * @param config.deviations - array of max deviations for value relatively to reference value at position with same index.
+   */
+  constructor(name, config = {}) {
+    const { maxValue, minValue, deviations } = config
     this.name = name
     this.maxValue = new BigNumber(
       maxValue !== undefined ? maxValue : Number.POSITIVE_INFINITY,
@@ -66,15 +113,22 @@ export class AssetSafeValueLimitValidator {
     )
   }
 
+  /**
+   * Makes validation of part of the bETH price info.
+   * @param valueBlockNumber - number of block where value was retrieved from
+   * @param value - value of bETH price info
+   * @param referenceValues - array of tuples [blockNumber, value of reference value]
+   * to calculate deviations of current value
+   */
   validate(valueBlockNumber, value, referenceValues = []) {
     value = new BigNumber(value)
     assert(!value.isNaN(), new Error('Value is NaN'))
-    this.validateUpperBound(value)
-    this.validateLowerBound(value)
-    this.validateDeviations(valueBlockNumber, value, referenceValues)
+    this._validateUpperBound(value)
+    this._validateLowerBound(value)
+    this._validateDeviations(valueBlockNumber, value, referenceValues)
   }
 
-  validateUpperBound(value) {
+  _validateUpperBound(value) {
     assert(
       this.maxValue.gte(value),
       new ValueTooHighError(
@@ -85,7 +139,7 @@ export class AssetSafeValueLimitValidator {
     )
   }
 
-  validateLowerBound(value) {
+  _validateLowerBound(value) {
     assert(
       this.minValue.lte(value),
       new ValueTooLowError(
@@ -96,7 +150,7 @@ export class AssetSafeValueLimitValidator {
     )
   }
 
-  validateDeviations(valueBlockNumber, value, referenceValues) {
+  _validateDeviations(valueBlockNumber, value, referenceValues) {
     const referenceValueChecks = Math.min(
       referenceValues.length,
       this.deviations.length,
