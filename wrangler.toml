@@ -9,9 +9,9 @@ SENTRY_PROJECT_ID = ""
 SENTRY_KEY = ""
 DEVIATION_BLOCK_OFFSETS = '[44800,6400,250]'
 BETH_RATE_LIMITS = '{"deviations":[10,5,2]}'
-BETH_PRICE_LIMITS = '{"maxValue":3100,"minValue":"3000","deviations":[20,15,5]}'
-STETH_RATE_LIMITS = '{"maxValue":1.05,"minValue":0.95,"deviations":[20,10,0.003]}'
-ETH_PRICE_LIMITS = '{"maxValue":4000,"minValue":2500,"deviations":[50,25,15]}'
+BETH_PRICE_LIMITS = '{"maxValue":3100,"minValue":"3000","maxDeviations":[20,15,5]}'
+STETH_RATE_LIMITS = '{"maxValue":1.05,"minValue":0.95,"maxDeviations":[20,10,0.003]}'
+ETH_PRICE_LIMITS = '{"maxValue":4000,"minValue":2500,"maxDeviations":[50,25,15]}'
 
 [build]
 command = "npm run build"

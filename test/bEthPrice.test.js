@@ -77,21 +77,25 @@ describe('Test bEthPriceSafe method', function() {
     const deviationBlockOffsets = [3, 6, 9]
     setGlobals({
       deviationBlockOffsets,
-      bEthRateLimits: { maxValue: 1.05, minValue: 1, deviations: [10, 5, 5] },
+      bEthRateLimits: {
+        maxValue: 1.05,
+        minValue: 1,
+        maxDeviations: [10, 5, 5],
+      },
       bEthPriceLimits: {
         maxValue: 3600,
         minValue: 2500,
-        deviations: [40, 30, 20],
+        maxDeviations: [40, 30, 20],
       },
       stEthRateLimits: {
         maxValue: 1.05,
         minValue: 0.92,
-        deviations: [10, 5, 1],
+        maxDeviations: [10, 5, 1],
       },
       ethPriceLimits: {
         maxValue: 3500,
         minValue: 2500,
-        deviations: [30, 15, 12],
+        maxDeviations: [30, 15, 12],
       },
     })
 

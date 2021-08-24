@@ -21,19 +21,19 @@ export class BEthSafePriceValidator {
    * @param config.bEthPrice - contains validations for bEthPrice in bEth price info
    * @param config.bEthPrice.maxValue - upper bound for bEthPrice. Number.POSITIVE_INFINITY by default.
    * @param config.bEthPrice.minValue - lower bound for bEthPrice. Number.NEGATIVE_INFINITY by default.
-   * @param config.bEthPrice.deviations - array of max deviations for bEthPrice relatively to reference value at position with same index.
+   * @param config.bEthPrice.maxDeviations - array of max deviations for bEthPrice relatively to reference value at position with same index.
    * @param config.bEthRate - contains validations for bEthRate in bEth price info
    * @param config.bEthRate.maxValue - upper bound for bEthRate. Number.POSITIVE_INFINITY by default.
    * @param config.bEthRate.minValue - lower bound for bEthRate. Number.NEGATIVE_INFINITY by default.
-   * @param config.bEthRate.deviations - array of max deviations for bEthRate relatively to reference value at position with same index.
+   * @param config.bEthRate.maxDeviations - array of max deviations for bEthRate relatively to reference value at position with same index.
    * @param config.stEthRate - contains validations for stEthRate in bEth price info
    * @param config.stEthRate.maxValue - upper bound for stEthRate. Number.POSITIVE_INFINITY by default.
    * @param config.stEthRate.minValue - lower bound for stEthRate. Number.NEGATIVE_INFINITY by default.
-   * @param config.stEthRate.deviations - array of max deviations for stEthRate relatively to reference value at position with same index.
+   * @param config.stEthRate.maxDeviations - array of max deviations for stEthRate relatively to reference value at position with same index.
    * @param config.ethPrice - contains validations for ethPrice in bEth price info
    * @param config.ethPrice.maxValue - upper bound for ethPrice. Number.POSITIVE_INFINITY by default.
    * @param config.ethPrice.minValue - lower bound for ethPrice. Number.NEGATIVE_INFINITY by default.
-   * @param config.ethPrice.deviations - array of max deviations for ethPrice relatively to reference value at position with same index.
+   * @param config.ethPrice.maxDeviations - array of max deviations for ethPrice relatively to reference value at position with same index.
    */
   constructor(config = {}) {
     const { deviationBlockOffsets = [], ...limits } = config
@@ -88,10 +88,10 @@ export class AssetSafeValueLimitValidator {
    * @param config - validation rules
    * @param config.maxValue - upper bound for value. Number.POSITIVE_INFINITY by default.
    * @param config.minValue - lower bound for value.  Number.NEGATIVE_INFINITY by default.
-   * @param config.deviations - array of max deviations for value relatively to reference value at position with same index.
+   * @param config.maxDeviations - array of max deviations for value relatively to reference value at position with same index.
    */
   constructor(name, config = {}) {
-    const { maxValue, minValue, deviations } = config
+    const { maxValue, minValue, maxDeviations } = config
     this.name = name
     this.maxValue = new BigNumber(
       maxValue !== undefined ? maxValue : Number.POSITIVE_INFINITY,
@@ -99,19 +99,19 @@ export class AssetSafeValueLimitValidator {
     this.minValue = new BigNumber(
       minValue !== undefined ? minValue : Number.NEGATIVE_INFINITY,
     )
-    this.deviations = (deviations || []).map(
+    this.maxDeviations = (maxDeviations || []).map(
       deviation => new BigNumber(deviation),
     )
     assert(!this.maxValue.isNaN(), new Error('maxValue is NaN'))
     assert(!this.minValue.isNaN(), new Error('minValue is NaN'))
     assert(this.minValue.lte(this.maxValue), new Error('minValue > maxValue'))
     assert(
-      this.deviations.every(diffLimit => !diffLimit.isNaN()),
-      new Error('deviations contains NaN values'),
+      this.maxDeviations.every(diffLimit => !diffLimit.isNaN()),
+      new Error('maxDeviations contains NaN values'),
     )
     assert(
-      this.deviations.every(diffLimit => diffLimit.gte(0)),
-      new Error('deviations contains negative values'),
+      this.maxDeviations.every(diffLimit => diffLimit.gte(0)),
+      new Error('maxDeviations contains negative values'),
     )
   }
 
@@ -155,12 +155,12 @@ export class AssetSafeValueLimitValidator {
   _validateDeviations(valueBlockNumber, value, referenceValues) {
     const referenceValueChecks = Math.min(
       referenceValues.length,
-      this.deviations.length,
+      this.maxDeviations.length,
     )
 
     for (let i = 0; i < referenceValueChecks; ++i) {
       const [referenceBlockNumber, referencePriceInfo] = referenceValues[i]
-      const maxDeviation = this.deviations[i]
+      const maxDeviation = this.maxDeviations[i]
       const deviation = value
         .minus(referencePriceInfo)
         .absoluteValue()

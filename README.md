@@ -60,7 +60,7 @@ Each of these variables must contain a valid JSON string of next type:
 {
   maxValue?: number | string;
   minValue?: number | string;
-  deviations: (number | string)[];
+  maxDeviations: (number | string)[];
 }
 ```
 

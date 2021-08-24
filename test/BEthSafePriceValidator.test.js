@@ -23,16 +23,16 @@ const CONFIG_POOR = {
   deviationBlockOffsets: [200],
   bEthPrice: { maxValue: 3000 },
   bEthRate: { minValue: 1.01 },
-  stEthRate: { deviations: [10] },
-  ethPrice: { maxValue: 4000, minValue: 1700, deviations: [40] },
+  stEthRate: { maxDeviations: [10] },
+  ethPrice: { maxValue: 4000, minValue: 1700, maxDeviations: [40] },
 }
 
 const CONFIG_FULL = {
   deviationBlockOffsets: [44800, 6400, 250],
-  bEthPrice: { maxValue: 3100, minValue: '3000', deviations: [20, 15, 5] },
-  bEthRate: { deviations: [10, 5, 2] },
-  stEthRate: { maxValue: 1.05, minValue: 0.95, deviations: [20, 10, 0.003] },
-  ethPrice: { maxValue: 4000, minValue: 2500, deviations: [50, 25, 15] },
+  bEthPrice: { maxValue: 3100, minValue: '3000', maxDeviations: [20, 15, 5] },
+  bEthRate: { maxDeviations: [10, 5, 2] },
+  stEthRate: { maxValue: 1.05, minValue: 0.95, maxDeviations: [20, 10, 0.003] },
+  ethPrice: { maxValue: 4000, minValue: 2500, maxDeviations: [50, 25, 15] },
 }
 
 function validateValidatorsIsCorrect(bEthSafePriceValidator, config = {}) {
@@ -40,14 +40,14 @@ function validateValidatorsIsCorrect(bEthSafePriceValidator, config = {}) {
   assert(deviationBlockOffsets === config.deviationBlockOffsets || [])
 
   for (const assetName of ASSET_NAMES) {
-    const expectedDeviations = config[assetName]?.deviations || []
+    const expectedDeviations = config[assetName]?.maxDeviations || []
     assert.equal(
-      validators[assetName].deviations.length,
+      validators[assetName].maxDeviations.length,
       expectedDeviations.length,
     )
     for (let i = 0; i < expectedDeviations.length; ++i) {
       assert.isTrue(
-        validators[assetName].deviations[i].eq(expectedDeviations[i]),
+        validators[assetName].maxDeviations[i].eq(expectedDeviations[i]),
       )
     }
 
@@ -93,7 +93,7 @@ describe('BEthInfoValidator', () => {
   })
 
   it('validate stEthRate invalid', () => {
-    const config = { stEthRate: { deviations: [5] } }
+    const config = { stEthRate: { maxDeviations: [5] } }
     const validator = new BEthSafePriceValidator(config)
     assert.throws(() =>
       validator.validate(BLOCK_NUMBER, PRICE_INFO, [
@@ -105,7 +105,7 @@ describe('BEthInfoValidator', () => {
   it('validate bEthRate invalid', () => {
     const config = {
       deviationBlockOffsets: [10, 20, 30],
-      bEthRate: { maxValue: 1.09, minValue: 0.9, deviations: [5] },
+      bEthRate: { maxValue: 1.09, minValue: 0.9, maxDeviations: [5] },
     }
     const validator = new BEthSafePriceValidator(config)
     assert.throws(() => validator.validate(BLOCK_NUMBER, PRICE_INFO))
@@ -141,29 +141,35 @@ describe('AssetSafeValueLimit', () => {
     )
   })
 
-  it('constructor deviations contains NaN values', () => {
+  it('constructor maxDeviations contains NaN values', () => {
     assert.throws(
       () =>
         new AssetSafeValueLimitValidator('bEthPrice', {
-          deviations: [0, 'null'],
+          maxDeviations: [0, 'null'],
         }),
     )
   })
 
-  it('constructor deviations contains negative values', () => {
+  it('constructor maxDeviations contains negative values', () => {
     assert.throws(
       () =>
-        new AssetSafeValueLimitValidator('bEthPrice', { deviations: [-0.1] }),
-      'deviations contains negative values',
+        new AssetSafeValueLimitValidator('bEthPrice', {
+          maxDeviations: [-0.1],
+        }),
+      'maxDeviations contains negative values',
     )
   })
 
   it('constructor not full set of limits', () => {
     const configs = [{ minValue: 1 }, { maxValue: 2 }]
-    const deviationsConfig = { deviations: ['1'] }
+    const deviationsConfig = { maxDeviations: ['1'] }
     let validator = new AssetSafeValueLimitValidator('test', deviationsConfig)
-    assert(validator.deviations.length === deviationsConfig.deviations.length)
-    assert(validator.deviations[0].isEqualTo(deviationsConfig.deviations[0]))
+    assert(
+      validator.maxDeviations.length === deviationsConfig.maxDeviations.length,
+    )
+    assert(
+      validator.maxDeviations[0].isEqualTo(deviationsConfig.maxDeviations[0]),
+    )
     for (const config of configs) {
       const validator = new AssetSafeValueLimitValidator('test', config)
       for (const [key, value] of Object.entries(config)) {
@@ -174,18 +180,18 @@ describe('AssetSafeValueLimit', () => {
 
   it('constructor without config', () => {
     const validator = new AssetSafeValueLimitValidator('test')
-    assert(validator.deviations.length === 0)
+    assert(validator.maxDeviations.length === 0)
     assert(validator.maxValue.isEqualTo(Number.POSITIVE_INFINITY))
     assert(validator.minValue.isEqualTo(Number.NEGATIVE_INFINITY))
   })
 
   it('constructor with full set of limits', () => {
-    const config = { deviations: [0], maxValue: 1.05, minValue: '0.95' }
+    const config = { maxDeviations: [0], maxValue: 1.05, minValue: '0.95' }
     const validator = new AssetSafeValueLimitValidator('test', config)
     assert(validator.maxValue.isEqualTo(config.maxValue))
     assert(validator.minValue.isEqualTo(config.minValue))
-    assert(validator.deviations.length === config.deviations.length)
-    assert(validator.deviations[0].isEqualTo(config.deviations[0]))
+    assert(validator.maxDeviations.length === config.maxDeviations.length)
+    assert(validator.maxDeviations[0].isEqualTo(config.maxDeviations[0]))
   })
 
   it('validate price too high', () => {
@@ -213,9 +219,9 @@ describe('AssetSafeValueLimit', () => {
     }
   })
 
-  it('validate deviations exceeded', () => {
+  it('validate maxDeviations exceeded', () => {
     const validator = new AssetSafeValueLimitValidator('test', {
-      deviations: [2],
+      maxDeviations: [2],
     })
     try {
       validator.validate(BLOCK_NUMBER, '1', [
@@ -242,9 +248,9 @@ describe('AssetSafeValueLimit', () => {
     assert.throws(() => validator.validate(BLOCK_NUMBER, null), 'Value is NaN')
   })
 
-  it('validate deviations with zero value', () => {
+  it('validate maxDeviations with zero value', () => {
     const validator = new AssetSafeValueLimitValidator('test', {
-      deviations: [2],
+      maxDeviations: [2],
     })
     try {
       validator.validate(BLOCK_NUMBER, '0', [
