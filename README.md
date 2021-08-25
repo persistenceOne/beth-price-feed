@@ -162,6 +162,10 @@ Navigate to root directory of the project and run `npm install` command
 
 4. Fill `zone_id` and `route` to publish `staging`/`production` builds. See [deployment instructions](https://developers.cloudflare.com/workers/get-started/guide#7-configure-your-project-for-deployment) for more details. This step might be skipped if only local development supposed.
 
+### Project Build
+
+Run `npm run build` command to build the current version of bETH price feed.
+
 ### Development Server
 
 To start a local server for developing your worker run `wrangler dev`.
