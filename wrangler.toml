@@ -7,11 +7,12 @@ account_id = ""
 ENV = "development"
 SENTRY_PROJECT_ID = ""
 SENTRY_KEY = ""
-DEVIATION_BLOCK_OFFSETS = '[44800,6400,250]'
-BETH_RATE_LIMITS = '{"deviations":[10,5,2]}'
-BETH_PRICE_LIMITS = '{"maxValue":3100,"minValue":"3000","maxDeviations":[20,15,5]}'
-STETH_RATE_LIMITS = '{"maxValue":1.05,"minValue":0.95,"maxDeviations":[20,10,0.003]}'
-ETH_PRICE_LIMITS = '{"maxValue":4000,"minValue":2500,"maxDeviations":[50,25,15]}'
+DEVIATION_BLOCK_OFFSETS = '[6500,260,40]'
+BETH_RATE_LIMITS = '{}'
+BETH_PRICE_LIMITS = '{"maxDeviations":[60,30,20]}'
+STETH_RATE_LIMITS = '{"maxDeviations":[5,1,0.5]}'
+ETH_PRICE_LIMITS = '{}'
+
 
 [build]
 command = "npm run build"
@@ -30,6 +31,11 @@ zone_id = ""
 ENV = "staging"
 SENTRY_PROJECT_ID = ""
 SENTRY_KEY = ""
+DEVIATION_BLOCK_OFFSETS = '[6500,260,40]'
+BETH_RATE_LIMITS = '{}'
+BETH_PRICE_LIMITS = '{"maxDeviations":[60,30,20]}'
+STETH_RATE_LIMITS = '{"maxDeviations":[5,1,0.5]}'
+ETH_PRICE_LIMITS = '{}'
 
 [env.production]
 workers_dev = false
@@ -41,3 +47,8 @@ zone_id = ""
 ENV = "production"
 SENTRY_PROJECT_ID = ""
 SENTRY_KEY = ""
+DEVIATION_BLOCK_OFFSETS = '[6500,260,40]'
+BETH_RATE_LIMITS = '{}'
+BETH_PRICE_LIMITS = '{"maxDeviations":[60,30,20]}'
+STETH_RATE_LIMITS = '{"maxDeviations":[5,1,0.5]}'
+ETH_PRICE_LIMITS = '{}'
