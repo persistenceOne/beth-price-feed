@@ -1,4 +1,4 @@
-import { bEthPrice } from './bEthPrice'
+import { bEthPriceSafe } from './bEthPrice'
 import { handleJsonRpcRequests } from './JsonRpcRequestsHandler'
 import { setGlobals } from './globals'
 
@@ -18,10 +18,16 @@ setGlobals({
   sentryProjectId: SENTRY_PROJECT_ID,
   sentryKey: SENTRY_KEY,
   ethRpcs: ethRPCs,
+  deviationBlockOffsets:
+    DEVIATION_BLOCK_OFFSETS && JSON.parse(DEVIATION_BLOCK_OFFSETS),
+  bEthRateLimits: BETH_RATE_LIMITS && JSON.parse(BETH_RATE_LIMITS),
+  bEthPriceLimits: BETH_PRICE_LIMITS && JSON.parse(BETH_PRICE_LIMITS),
+  stEthRateLimits: STETH_RATE_LIMITS && JSON.parse(STETH_RATE_LIMITS),
+  ethPriceLimits: ETH_PRICE_LIMITS && JSON.parse(ETH_PRICE_LIMITS),
 })
 
 addEventListener('fetch', event => {
   event.respondWith(
-    handleJsonRpcRequests(event.request, { currentPrice: bEthPrice }),
+    handleJsonRpcRequests(event.request, { currentPrice: bEthPriceSafe }),
   )
 })

@@ -10,21 +10,24 @@ export async function handleJsonRpcRequests(request, handlers) {
   if (request.method !== 'POST') {
     return new NotFoundResponse()
   }
-
+  let rpcRequest = { id: null }
   try {
-    const rpcRequest = await parseJsonRpcPayload(request)
+    rpcRequest = await parseJsonRpcPayload(request)
     const rpcResponse = await handleRpcRequest(handlers, rpcRequest)
     return new JsonResponse(rpcResponse)
   } catch (error) {
-    if (error.data) {
-      return new JsonResponse(error.data)
+    // error contains data for JsonRpcError
+    if (error instanceof jsonrpc.JsonRpcError) {
+      return new JsonResponse(jsonrpc.error(rpcRequest.id, error))
     }
+    const jsonRpcError = error.code
+      ? new jsonrpc.JsonRpcError(error.message, error.code, error.data)
+      : jsonrpc.JsonRpcError.internalError()
+
     const errorType = error.name || (error.constructor || {}).name
     console.error(`${errorType}: ${error.message || '<no message>'}`)
     await log(error, request)
-    return new JsonResponse(
-      jsonrpc.error(null, new jsonrpc.JsonRpcError('Internal error', -32603)),
-    )
+    return new JsonResponse(jsonrpc.error(rpcRequest.id, jsonRpcError))
   }
 }
 
@@ -34,23 +37,23 @@ async function parseJsonRpcPayload(request) {
     payloadText = await request.text()
     JSON.parse(payloadText)
   } catch {
-    throw new JsonRpcParseError()
+    throw jsonrpc.JsonRpcError.parseError()
   }
   const { payload, type } = jsonrpc.parse(payloadText)
   switch (type) {
-    case 'invalid':
-      throw new JsonRpcInvalidRequestError()
     case 'request':
       return payload
+    case 'invalid':
+      throw jsonrpc.JsonRpcError.invalidRequest()
     default:
-      throw new JsonRpcMethodNotFoundError()
+      throw jsonrpc.JsonRpcError.methodNotFound()
   }
 }
 
 async function handleRpcRequest(handlers, rpcRequest) {
   const handler = handlers[rpcRequest.method]
   if (!handler) {
-    throw new JsonRpcMethodNotFoundError()
+    throw jsonrpc.JsonRpcError.methodNotFound()
   }
   const result = await handler()
   return jsonrpc.success(rpcRequest.id, result)
@@ -67,35 +70,5 @@ class JsonResponse extends Response {
     super(JSON.stringify(payload), {
       headers: { 'content-type': 'application/json' },
     })
-  }
-}
-
-class JsonRpcError extends Error {
-  constructor(data) {
-    super('Error on JSON RPC request')
-    this.data = data
-    this.name = 'RpcError'
-  }
-}
-
-class JsonRpcParseError extends JsonRpcError {
-  constructor() {
-    super(jsonrpc.error(null, new jsonrpc.JsonRpcError('Parse error', -32700)))
-  }
-}
-
-class JsonRpcInvalidRequestError extends JsonRpcError {
-  constructor() {
-    super(
-      jsonrpc.error(null, new jsonrpc.JsonRpcError('Invalid Request', -32600)),
-    )
-  }
-}
-
-class JsonRpcMethodNotFoundError extends JsonRpcError {
-  constructor() {
-    super(
-      jsonrpc.error(null, new jsonrpc.JsonRpcError('Method not found', -32601)),
-    )
   }
 }

@@ -2,7 +2,7 @@ import assert from 'assert'
 import fetch from 'node-fetch'
 import BigNumber from 'bignumber.js'
 
-import { bEthPrice, setContractAddresses } from '../src/bEthPrice.js'
+import { bEthPriceSafe, setContractAddresses } from '../src/bEthPrice.js'
 import { setGlobals } from '../src/globals'
 import { ContractFactory, providers } from 'ethers'
 import AnchorVaultStub from './contracts/AnchorVaultStub.json'
@@ -20,12 +20,16 @@ const bEthPriceFormula = ({ latestAnswer, dy, rate }) =>
     .dividedBy(1e8)
     .toFixed(8)
 
-describe('Test bEthPrice method', function() {
+describe('Test bEthPriceSafe method', function() {
   this.timeout(50000)
-  let signer, anchorVaultStub, curvePoolStub, chainLinkEthUsdPriceFeedStub
+  let signer,
+    anchorVaultStub,
+    curvePoolStub,
+    chainLinkEthUsdPriceFeedStub,
+    provider
 
   before(async () => {
-    const provider = new providers.JsonRpcProvider(ETH_RPC_NODE)
+    provider = new providers.JsonRpcProvider(ETH_RPC_NODE)
     signer = await provider.getSigner(0)
 
     const deployedContractStubs = await deployContractStubs(signer)
@@ -42,14 +46,14 @@ describe('Test bEthPrice method', function() {
     })
   })
 
-  it('Test return value', async () => {
+  it('Test return value is correct', async () => {
     const iterations = 30
     let i = 0
     while (i < iterations) {
       const testCase = {
         latestAnswer: bigRandom(1e10, 8e11), // value in range [100.00000000, 8000.00000000]
-        dy: bigRandom(0.9e18, 1.2e18), // value in range [0.85, 1.5]
-        rate: bigRandom(1e18, 3e18), // value in range [1, 10]
+        dy: bigRandom(0.9e18, 1.2e18), // value in range [0.9, 1.2]
+        rate: bigRandom(1e18, 3e18), // value in range [1, 3]
       }
       console.log(`Iteration #${i + 1}`)
       console.log('ETH Price:', formatBigNumber(testCase.latestAnswer, 8))
@@ -61,13 +65,76 @@ describe('Test bEthPrice method', function() {
         anchorVaultStub.setValue(testCase.rate),
       ])
       const expectedResult = bEthPriceFormula(testCase)
-      const actualResult = await bEthPrice()
+      const actualResult = await bEthPriceSafe()
       console.log('Result Value:', actualResult)
       console.log('Expected Value:', expectedResult)
       console.log()
       assert.strictEqual(expectedResult, actualResult)
       ++i
     }
+  })
+  it('Test validation passes correctly', async () => {
+    const deviationBlockOffsets = [3, 6, 9]
+    setGlobals({
+      deviationBlockOffsets,
+      bEthRateLimits: {
+        maxValue: 1.05,
+        minValue: 1,
+        maxDeviations: [10, 5, 5],
+      },
+      bEthPriceLimits: {
+        maxValue: 3600,
+        minValue: 2500,
+        maxDeviations: [40, 30, 20],
+      },
+      stEthRateLimits: {
+        maxValue: 1.05,
+        minValue: 0.92,
+        maxDeviations: [10, 5, 1],
+      },
+      ethPriceLimits: {
+        maxValue: 3500,
+        minValue: 2500,
+        maxDeviations: [30, 15, 12],
+      },
+    })
+
+    const deviationTestValues = [
+      {
+        latestAnswer: bigRandom(3e11), // 3000
+        dy: bigRandom(0.995e18), // 0.995
+        rate: bigRandom(1e18), // 1
+      },
+      {
+        latestAnswer: bigRandom(3.1e11), // 3100
+        dy: bigRandom(0.994e18), // 0.994
+        rate: bigRandom(1.01e18), // 1.01
+      },
+      {
+        latestAnswer: bigRandom(3.5e11), // 3500
+        dy: bigRandom(1.001e18), // 1.001
+        rate: bigRandom(1.002e18), // 1.002
+      },
+      {
+        latestAnswer: bigRandom(2.7e11), // 2700
+        dy: bigRandom(0.993e18), // 0.993
+        rate: bigRandom(1.05e18), // 1.05
+      },
+    ]
+
+    for (let i = 0; i < deviationTestValues.length; ++i) {
+      const testCase = deviationTestValues[i]
+      await Promise.all([
+        chainLinkEthUsdPriceFeedStub.setValue(testCase.latestAnswer),
+        curvePoolStub.setValue(testCase.dy),
+        anchorVaultStub.setValue(testCase.rate),
+      ])
+    }
+    const actualResult = await bEthPriceSafe()
+    const expectedResult = bEthPriceFormula(
+      deviationTestValues[deviationTestValues.length - 1],
+    )
+    assert.strictEqual(expectedResult, actualResult)
   })
 })
 
@@ -103,7 +170,7 @@ const deployContractStubs = async signer => {
   return { anchorVaultStub, curvePoolStub, chainLinkEthUsdPriceFeedStub }
 }
 
-const bigRandom = (min, max) => {
+const bigRandom = (min, max = min) => {
   const rangeLength = BigNumber(max).minus(min)
   return BigNumber.random(10)
     .multipliedBy(rangeLength)

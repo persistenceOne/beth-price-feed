@@ -17,6 +17,11 @@
     "global": "readonly",
     "describe": "readonly",
     "before": "readonly",
-    "it": "readonly"
+    "it": "readonly",
+    "DEVIATION_BLOCK_OFFSETS": "readonly",
+    "BETH_RATE_LIMITS": "readonly",
+    "BETH_PRICE_LIMITS": "readonly",
+    "STETH_RATE_LIMITS": "readonly",
+    "ETH_PRICE_LIMITS": "readonly"
   }
 }
