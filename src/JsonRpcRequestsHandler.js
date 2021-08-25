@@ -10,15 +10,15 @@ export async function handleJsonRpcRequests(request, handlers) {
   if (request.method !== 'POST') {
     return new NotFoundResponse()
   }
-
+  let rpcRequest = { id: null }
   try {
-    const rpcRequest = await parseJsonRpcPayload(request)
+    rpcRequest = await parseJsonRpcPayload(request)
     const rpcResponse = await handleRpcRequest(handlers, rpcRequest)
     return new JsonResponse(rpcResponse)
   } catch (error) {
     // error contains data for JsonRpcError
     if (error instanceof jsonrpc.JsonRpcError) {
-      return new JsonResponse(jsonrpc.error(null, error))
+      return new JsonResponse(jsonrpc.error(rpcRequest.id, error))
     }
     const jsonRpcError = error.code
       ? new jsonrpc.JsonRpcError(error.message, error.code, error.data)
@@ -27,7 +27,7 @@ export async function handleJsonRpcRequests(request, handlers) {
     const errorType = error.name || (error.constructor || {}).name
     console.error(`${errorType}: ${error.message || '<no message>'}`)
     await log(error, request)
-    return new JsonResponse(jsonrpc.error(null, jsonRpcError))
+    return new JsonResponse(jsonrpc.error(rpcRequest.id, jsonRpcError))
   }
 }
 
@@ -41,10 +41,10 @@ async function parseJsonRpcPayload(request) {
   }
   const { payload, type } = jsonrpc.parse(payloadText)
   switch (type) {
-    case 'invalid':
-      throw jsonrpc.JsonRpcError.invalidRequest()
     case 'request':
       return payload
+    case 'invalid':
+      throw jsonrpc.JsonRpcError.invalidRequest()
     default:
       throw jsonrpc.JsonRpcError.methodNotFound()
   }
