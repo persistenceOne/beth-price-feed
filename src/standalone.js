@@ -20,6 +20,7 @@ var {
   STETH_RATE_LIMITS,
   ETH_PRICE_LIMITS,
   ETH_RPCS,
+  REQUEST_TIMEOUT,
 } = process.env
 
 setGlobals({
