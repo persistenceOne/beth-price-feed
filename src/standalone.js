@@ -33,6 +33,7 @@ setGlobals({
   bEthPriceLimits: BETH_PRICE_LIMITS && JSON.parse(BETH_PRICE_LIMITS),
   stEthRateLimits: STETH_RATE_LIMITS && JSON.parse(STETH_RATE_LIMITS),
   ethPriceLimits: ETH_PRICE_LIMITS && JSON.parse(ETH_PRICE_LIMITS),
+  requestTimeout: REQUEST_TIMEOUT && Number.parseInt(REQUEST_TIMEOUT, 10),
 })
 
 export function getBethPriceSafeStandalone() {
