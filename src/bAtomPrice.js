@@ -38,7 +38,7 @@ export function setContractAddresses(addresses) {
 export async function bAtomPriceSafe() {
   const { deviationBlockOffsets, bAtomSafePriceValidator } = globals
   const [currentPriceInfo, currentBlockHex] = await Promise.all([
-    bAtomPriceInfo(),
+    bAtomPriceInfo(14094995),
     ethBlockNumber(),
   ])
   const referenceValues = await Promise.all(

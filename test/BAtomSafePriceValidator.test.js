@@ -117,7 +117,7 @@ describe('BAtomInfoValidator', () => {
 
   it('validate all validations passed', () => {
     const validator = new BAtomSafePriceValidator(CONFIG_POOR)
-    const referenceValues = [[123456789, { atomPrice: 20 }]]
+    const referenceValues = [[123456789, { atomPrice: 30 }]]
     validator.validate(BLOCK_NUMBER, PRICE_INFO, referenceValues)
   })
 })

@@ -1,14 +1,15 @@
 import assert from 'assert'
 import BigNumber from 'bignumber.js'
-import { ContractFactory, providers } from 'ethers'
+import { ContractFactory } from 'ethers'
 import fetch from 'node-fetch'
 import { bAtomPriceSafe, setContractAddresses } from '../src/bAtomPrice.js'
 import { setGlobals } from '../src/globals'
 import ChainLinkAtomUsdPriceFeedStub from './contracts/ChainLinkAtomUsdPriceFeedStub.json'
+import { ethers } from 'ethers';
 
 global.fetch = fetch
 
-const ETH_RPC_NODE = process.env.SECONDARY_RPC
+const ETH_RPC_NODE = process.env.ETH_RPCS
 
 const bAtomPriceFormula = ({ latestAnswer, dy, rate }) =>
   new BigNumber(latestAnswer)
@@ -26,10 +27,11 @@ describe('Test bAtomPriceSafe method', function() {
     provider
 
   before(async () => {
-    provider = new providers.JsonRpcProvider(ETH_RPC_NODE)
-    signer = await provider.getSigner(0)
+    provider = new ethers.providers.InfuraProvider("homestead", process.env.API_KEY);
 
-    console.log("signer: ", signer)
+   let wallet =  ethers.Wallet.fromMnemonic( process.env.MMNEMONIC )
+
+    signer = wallet.connect( provider );
 
     const deployedContractStubs = await deployContractStubs(signer)
     console.log("deployedContractStubs: ", deployedContractStubs)
