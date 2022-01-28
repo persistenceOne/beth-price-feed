@@ -9,6 +9,18 @@ let ethRPCs = []
 // try/catch block here to allow script to be compiled
 try {
   ethRPCs = JSON.parse(ETH_RPCS)
+  var {
+    ENV,
+    SENTRY_PROJECT_ID,
+    SENTRY_KEY,
+    DEVIATION_BLOCK_OFFSETS,
+    // BETH_RATE_LIMITS,
+    // BATOM_PRICE_LIMITS,
+    // STETH_RATE_LIMITS,
+    // ATOM_PRICE_LIMITS,
+    ETH_RPCS,
+    REQUEST_TIMEOUT,
+  } = process.env
 } catch (e) {
   console.error(e)
 }

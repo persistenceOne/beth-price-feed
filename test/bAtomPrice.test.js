@@ -8,7 +8,7 @@ import ChainLinkAtomUsdPriceFeedStub from './contracts/ChainLinkAtomUsdPriceFeed
 
 global.fetch = fetch
 
-const ETH_RPC_NODE = 'http://127.0.0.1:8545/'
+const ETH_RPC_NODE = process.env.ETH_RPC_NODE
 
 const bAtomPriceFormula = ({ latestAnswer, dy, rate }) =>
   new BigNumber(latestAnswer)
@@ -48,7 +48,7 @@ describe('Test bAtomPriceSafe method', function() {
     let i = 0
     while (i < iterations) {
       const testCase = {
-        latestAnswer: bigRandom(1e10, 8e11), // value in range [100.00000000, 8000.00000000]
+        latestAnswer: bigRandom(1e8, 8e9), // value in range [1.0000000000, 80.0000000000]
         // dy: bigRandom(0.9e18, 1.2e18), // value in range [0.9, 1.2]
         // rate: bigRandom(1e18, 3e18), // value in range [1, 3]
       }
@@ -76,14 +76,14 @@ describe('Test bAtomPriceSafe method', function() {
     setGlobals({
       deviationBlockOffsets,
       bAtomPriceLimits: {
-        maxValue: 3600,
-        minValue: 2500,
-        maxDeviations: [40, 30, 20],
+        maxValue: 36,
+        minValue: 25,
+        maxDeviations: [0.4, 0.3, 0.2],
       },
       atomPriceLimits: {
-        maxValue: 3500,
-        minValue: 2500,
-        maxDeviations: [30, 15, 12],
+        maxValue: 35,
+        minValue: 25,
+        maxDeviations: [0.3, 0.15, 0.12],
       },
       /* bAtomRateLimits: {
         maxValue: 1.05,
@@ -99,22 +99,22 @@ describe('Test bAtomPriceSafe method', function() {
 
     const deviationTestValues = [
       {
-        latestAnswer: bigRandom(3e11), // 3000
+        latestAnswer: bigRandom(3e9), // 30
         // dy: bigRandom(0.995e18), // 0.995
         // rate: bigRandom(1e18), // 1
       },
       {
-        latestAnswer: bigRandom(3.1e11), // 3100
+        latestAnswer: bigRandom(3.1e9), // 31
         // dy: bigRandom(0.994e18), // 0.994
         // rate: bigRandom(1.01e18), // 1.01
       },
       {
-        latestAnswer: bigRandom(3.5e11), // 3500
+        latestAnswer: bigRandom(3.5e9), // 35
         // dy: bigRandom(1.001e18), // 1.001
         // rate: bigRandom(1.002e18), // 1.002
       },
       {
-        latestAnswer: bigRandom(2.7e11), // 2700
+        latestAnswer: bigRandom(2.7e9), // 27
         // dy: bigRandom(0.993e18), // 0.993
         // rate: bigRandom(1.05e18), // 1.05
       },

@@ -5,7 +5,7 @@ import { getbAtomPriceSafeStandalone } from '../src/standalone'
 describe('getbAtomPriceSafeStandalone', () => {
   it('should resolve latest known price', async () => {
     setGlobals({
-      ethRpcs: ['http://127.0.0.1:8545/'],
+      ethRpcs: [process.env.ETH_RPCS],
       requestTimeout: 30000,
     })
 
@@ -15,7 +15,7 @@ describe('getbAtomPriceSafeStandalone', () => {
 
   it('should throw upon timeout', async () => {
     setGlobals({
-      ethRpcs: ['http://127.0.0.1:8545/'],
+      ethRpcs: [process.env.ETH_RPCS],
       requestTimeout: 1,
     })
 
