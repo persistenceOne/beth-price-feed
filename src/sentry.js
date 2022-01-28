@@ -2,7 +2,7 @@ import { globals } from './globals'
 /**
  * Copied from: https://github.com/bustle/cf-sentry/blob/master/sentry.js
  */
-const APP = 'beth-price-feed'
+const APP = 'batom-price-feed'
 const TAGS = { app: APP }
 let SERVER_NAME = () => `${APP}-${globals.env}`
 

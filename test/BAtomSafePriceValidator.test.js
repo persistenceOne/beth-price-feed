@@ -2,41 +2,45 @@ import BigNumber from 'bignumber.js'
 import { assert } from 'chai'
 import {
   AssetSafeValueLimitValidator,
-  BEthSafePriceValidator,
+  BAtomSafePriceValidator,
   MaxDeviationError,
   ValueTooHighError,
   ValueTooLowError,
-} from '../src/BEthSafePriceValidator'
+} from '../src/BAtomSafePriceValidator'
 
-const ASSET_NAMES = ['bEthPrice', 'bEthRate', 'stEthRate', 'ethPrice']
+const ASSET_NAMES = ['bAtomPrice', 'atomPrice']
 
 const PRICE_INFO = {
-  bEthPrice: new BigNumber(2900),
-  ethPrice: 3000,
-  stEthRate: '0.99',
-  bEthRate: '1.1',
+  bAtomPrice: new BigNumber(30),
+  atomPrice: 30,
+  // stEthRate: '0.99',
+  // bEthRate: '1.1',
 }
 
 const BLOCK_NUMBER = 123456789
 
 const CONFIG_POOR = {
   deviationBlockOffsets: [200],
-  bEthPrice: { maxValue: 3000 },
-  bEthRate: { minValue: 1.01 },
-  stEthRate: { maxDeviations: [10] },
-  ethPrice: { maxValue: 4000, minValue: 1700, maxDeviations: [40] },
+  bAtomPrice: { maxValue: 30 },
+  // bEthRate: { minValue: 1.01 },
+  // stEthRate: { maxDeviations: [10] },
+  atomPrice: { maxValue: 40, minValue: 17, maxDeviations: [4] },
 }
 
 const CONFIG_FULL = {
   deviationBlockOffsets: [44800, 6400, 250],
-  bEthPrice: { maxValue: 3100, minValue: '3000', maxDeviations: [20, 15, 5] },
-  bEthRate: { maxDeviations: [10, 5, 2] },
-  stEthRate: { maxValue: 1.05, minValue: 0.95, maxDeviations: [20, 10, 0.003] },
-  ethPrice: { maxValue: 4000, minValue: 2500, maxDeviations: [50, 25, 15] },
+  bAtomPrice: {
+    maxValue: 31,
+    minValue: '30',
+    maxDeviations: [2, 1.5, 0.5],
+  },
+  // bEthRate: { maxDeviations: [10, 5, 2] },
+  // stEthRate: { maxValue: 1.05, minValue: 0.95, maxDeviations: [20, 10, 0.003] },
+  atomPrice: { maxValue: 40, minValue: 25, maxDeviations: [5, 2.5, 1.5] },
 }
 
-function validateValidatorsIsCorrect(bEthSafePriceValidator, config = {}) {
-  const { validators, deviationBlockOffsets } = bEthSafePriceValidator
+function validateValidatorsIsCorrect(bAtomSafePriceValidator, config = {}) {
+  const { validators, deviationBlockOffsets } = bAtomSafePriceValidator
   assert(deviationBlockOffsets === config.deviationBlockOffsets || [])
 
   for (const assetName of ASSET_NAMES) {
@@ -64,37 +68,37 @@ function validateValidatorsIsCorrect(bEthSafePriceValidator, config = {}) {
   }
 }
 
-describe('BEthInfoValidator', () => {
+describe('BAtomInfoValidator', () => {
   it('constructor without params', () => {
-    const bEthSafePriceValidator = new BEthSafePriceValidator()
-    validateValidatorsIsCorrect(bEthSafePriceValidator, {})
+    const bAtomSafePriceValidator = new BAtomSafePriceValidator()
+    validateValidatorsIsCorrect(bAtomSafePriceValidator, {})
   })
 
   it('constructor with poor config', () => {
-    const bEthSafePriceValidator = new BEthSafePriceValidator(CONFIG_POOR)
-    validateValidatorsIsCorrect(bEthSafePriceValidator, CONFIG_POOR)
+    const bAtomSafePriceValidator = new BAtomSafePriceValidator(CONFIG_POOR)
+    validateValidatorsIsCorrect(bAtomSafePriceValidator, CONFIG_POOR)
   })
 
   it('constructor with reach config', () => {
-    const bEthSafePriceValidator = new BEthSafePriceValidator(CONFIG_FULL)
-    validateValidatorsIsCorrect(bEthSafePriceValidator, CONFIG_FULL)
+    const bAtomSafePriceValidator = new BAtomSafePriceValidator(CONFIG_FULL)
+    validateValidatorsIsCorrect(bAtomSafePriceValidator, CONFIG_FULL)
   })
 
-  it('validate bEthPrice invalid', () => {
-    const config = { bEthPrice: { maxValue: 2500 } }
-    const validator = new BEthSafePriceValidator(config)
+  it('validate bAtomPrice invalid', () => {
+    const config = { bAtomPrice: { maxValue: 25 } }
+    const validator = new BAtomSafePriceValidator(config)
     assert.throws(() => validator.validate(BLOCK_NUMBER, PRICE_INFO))
   })
 
-  it('validate ethPrice invalid', () => {
-    const config = { ethPrice: { minValue: '3001' } }
-    const validator = new BEthSafePriceValidator(config)
+  it('validate atomPrice invalid', () => {
+    const config = { atomPrice: { minValue: '31' } }
+    const validator = new BAtomSafePriceValidator(config)
     assert.throws(() => validator.validate(BLOCK_NUMBER, PRICE_INFO))
   })
 
-  it('validate stEthRate invalid', () => {
+  /* it('validate stEthRate invalid', () => {
     const config = { stEthRate: { maxDeviations: [5] } }
-    const validator = new BEthSafePriceValidator(config)
+    const validator = new BAtomSafePriceValidator(config)
     assert.throws(() =>
       validator.validate(BLOCK_NUMBER, PRICE_INFO, [
         { stEthRate: new BigNumber('1.3') },
@@ -107,13 +111,13 @@ describe('BEthInfoValidator', () => {
       deviationBlockOffsets: [10, 20, 30],
       bEthRate: { maxValue: 1.09, minValue: 0.9, maxDeviations: [5] },
     }
-    const validator = new BEthSafePriceValidator(config)
+    const validator = new BAtomSafePriceValidator(config)
     assert.throws(() => validator.validate(BLOCK_NUMBER, PRICE_INFO))
-  })
+  }) */
 
   it('validate all validations passed', () => {
-    const validator = new BEthSafePriceValidator(CONFIG_POOR)
-    const referenceValues = [[123456789, { ethPrice: 2000 }]]
+    const validator = new BAtomSafePriceValidator(CONFIG_POOR)
+    const referenceValues = [[123456789, { atomPrice: 20 }]]
     validator.validate(BLOCK_NUMBER, PRICE_INFO, referenceValues)
   })
 })
@@ -121,20 +125,20 @@ describe('BEthInfoValidator', () => {
 describe('AssetSafeValueLimit', () => {
   it('constructor maxValue is NaN', () => {
     assert.throws(
-      () => new AssetSafeValueLimitValidator('bEthPrice', { maxValue: '' }),
+      () => new AssetSafeValueLimitValidator('bAtomPrice', { maxValue: '' }),
     )
   })
 
   it('constructor minValue is NaN', () => {
     assert.throws(
-      () => new AssetSafeValueLimitValidator('bEthPrice', { maxValue: null }),
+      () => new AssetSafeValueLimitValidator('bAtomPrice', { maxValue: null }),
     )
   })
 
   it('constructor minValue > maxValue', () => {
     assert.throws(
       () =>
-        new AssetSafeValueLimitValidator('bEthPrice', {
+        new AssetSafeValueLimitValidator('bAtomPrice', {
           maxValue: 1.1,
           minValue: 1.2,
         }),
@@ -144,7 +148,7 @@ describe('AssetSafeValueLimit', () => {
   it('constructor maxDeviations contains NaN values', () => {
     assert.throws(
       () =>
-        new AssetSafeValueLimitValidator('bEthPrice', {
+        new AssetSafeValueLimitValidator('bAtomPrice', {
           maxDeviations: [0, 'null'],
         }),
     )
@@ -153,7 +157,7 @@ describe('AssetSafeValueLimit', () => {
   it('constructor maxDeviations contains negative values', () => {
     assert.throws(
       () =>
-        new AssetSafeValueLimitValidator('bEthPrice', {
+        new AssetSafeValueLimitValidator('bAtomPrice', {
           maxDeviations: [-0.1],
         }),
       'maxDeviations contains negative values',

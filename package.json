@@ -1,16 +1,17 @@
 {
   "private": true,
-  "name": "beth-price-feed",
+  "name": "batom-price-feed",
   "version": "1.0.0",
-  "description": "bETH/USD JSON-RPC Price Feed",
+  "description": "bATOM/USD JSON-RPC Price Feed",
   "main": "./dist/worker.js",
   "scripts": {
     "format": "prettier --write '**/*.{js,css,json,md}'",
     "build": "esbuild ./src/index.js --bundle --outfile=./dist/worker.js --platform=node",
     "build-standalone": "esbuild ./src/standalone.js --bundle --outfile=./dist/standalone.js --platform=node",
-    "test": "export NODE_ENV=test && nyc mocha"
+    "test": "export NODE_ENV=test && nyc mocha",
+    "testWindows": "SET NODE_ENV=test && nyc mocha"
   },
-  "author": "Bogdan Kovtun <psirex48@gmail.com>",
+  "author": "Persistence",
   "license": "MIT",
   "devDependencies": {
     "@babel/cli": "^7.14.5",

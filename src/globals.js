@@ -1,4 +1,4 @@
-import { BEthSafePriceValidator } from './BEthSafePriceValidator'
+import { BAtomSafePriceValidator } from './BAtomSafePriceValidator'
 
 export const globals = {
   env: 'development',
@@ -6,7 +6,7 @@ export const globals = {
   sentryKey: '',
   ethRpcs: [],
   deviationBlockOffsets: [],
-  bEthSafePriceValidator: new BEthSafePriceValidator(),
+  bAtomSafePriceValidator: new BAtomSafePriceValidator(),
   requestTimeout: 30000,
 }
 
@@ -16,10 +16,10 @@ export function setGlobals({
   sentryKey,
   ethRpcs,
   deviationBlockOffsets,
-  bEthRateLimits,
-  bEthPriceLimits,
-  stEthRateLimits,
-  ethPriceLimits,
+  // bAtomRateLimits,
+  bAtomPriceLimits,
+  // stEthRateLimits,
+  atomPriceLimits,
   requestTimeout,
 }) {
   globals.env = env || globals.env
@@ -28,12 +28,12 @@ export function setGlobals({
   globals.ethRpcs = ethRpcs || globals.ethRpcs
   globals.deviationBlockOffsets =
     deviationBlockOffsets || globals.deviationBlockOffsets
-  globals.bEthSafePriceValidator = new BEthSafePriceValidator({
+  globals.bAtomSafePriceValidator = new BAtomSafePriceValidator({
     deviationBlockOffsets,
-    bEthRate: bEthRateLimits,
-    bEthPrice: bEthPriceLimits,
-    stEthRate: stEthRateLimits,
-    ethPrice: ethPriceLimits,
+    // bAtomRate: bAtomRateLimits,
+    bAtomPrice: bAtomPriceLimits,
+    // stEthRate: stEthRateLimits,
+    atomPrice: atomPriceLimits,
   })
   globals.requestTimeout = requestTimeout || globals.requestTimeout
 }

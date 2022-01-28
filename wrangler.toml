@@ -1,6 +1,6 @@
 workers_dev = true
 type = "javascript"
-name = "beth-price-feed-dev"
+name = "batom-price-feed-dev"
 account_id = ""
 
 [vars]
@@ -8,10 +8,10 @@ ENV = "development"
 SENTRY_PROJECT_ID = ""
 SENTRY_KEY = ""
 DEVIATION_BLOCK_OFFSETS = '[6500,260,40]'
-BETH_RATE_LIMITS = '{}'
-BETH_PRICE_LIMITS = '{"maxDeviations":[60,30,20]}'
+BATOM_RATE_LIMITS = '{}'
+BATOM_PRICE_LIMITS = '{"maxDeviations":[60,30,20]}'
 STETH_RATE_LIMITS = '{"maxDeviations":[5,1,0.5]}'
-ETH_PRICE_LIMITS = '{}'
+ATOM_PRICE_LIMITS = '{}'
 
 
 [build]
@@ -23,7 +23,7 @@ format = "service-worker"
 
 [env.staging]
 workers_dev = false
-name = "beth-price-feed-staging"
+name = "batom-price-feed-staging"
 route = ""
 zone_id = ""
 
@@ -32,14 +32,14 @@ ENV = "staging"
 SENTRY_PROJECT_ID = ""
 SENTRY_KEY = ""
 DEVIATION_BLOCK_OFFSETS = '[6500,260,40]'
-BETH_RATE_LIMITS = '{}'
-BETH_PRICE_LIMITS = '{"maxDeviations":[60,30,20]}'
+BATOM_RATE_LIMITS = '{}'
+BATOM_PRICE_LIMITS = '{"maxDeviations":[60,30,20]}'
 STETH_RATE_LIMITS = '{"maxDeviations":[5,1,0.5]}'
-ETH_PRICE_LIMITS = '{}'
+ATOM_PRICE_LIMITS = '{}'
 
 [env.production]
 workers_dev = false
-name = "beth-price-feed"
+name = "batom-price-feed"
 route = ""
 zone_id = ""
 
@@ -48,7 +48,7 @@ ENV = "production"
 SENTRY_PROJECT_ID = ""
 SENTRY_KEY = ""
 DEVIATION_BLOCK_OFFSETS = '[6500,260,40]'
-BETH_RATE_LIMITS = '{}'
-BETH_PRICE_LIMITS = '{"maxDeviations":[60,30,20]}'
+BATOM_RATE_LIMITS = '{}'
+BATOM_PRICE_LIMITS = '{"maxDeviations":[60,30,20]}'
 STETH_RATE_LIMITS = '{"maxDeviations":[5,1,0.5]}'
-ETH_PRICE_LIMITS = '{}'
+ATOM_PRICE_LIMITS = '{}'

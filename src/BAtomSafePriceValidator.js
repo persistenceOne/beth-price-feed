@@ -6,34 +6,35 @@ const ERROR_CODES = {
   DEVIATION_TOO_HIGH: -40003,
 }
 
-const ASSET_NAMES = ['bEthPrice', 'bEthRate', 'stEthRate', 'ethPrice']
+// const ASSET_NAMES = ['bAtomPrice', 'bEthRate', 'stEthRate', 'atomPrice']
+const ASSET_NAMES = ['bAtomPrice', 'atomPrice']
 
 /**
- * Validates info about bETH price: ethPrice, stEthRate, bEthRate, bEthPrice
+ * Validates info about bETH price: atomPrice, stEthRate, bEthRate, bAtomPrice
  * according to passed config in the constructor.
  */
-export class BEthSafePriceValidator {
+export class BAtomSafePriceValidator {
   /**
-   * Creates new instance of BEthSafePriceValidator.
+   * Creates new instance of BAtomSafePriceValidator.
    * @param config - validation rules to be applied
    * @param config.deviationBlockOffsets - contains offsets of blocks
    *  where bEth price info in reference values were retrieved from
-   * @param config.bEthPrice - contains validations for bEthPrice in bEth price info
-   * @param config.bEthPrice.maxValue - upper bound for bEthPrice. Number.POSITIVE_INFINITY by default.
-   * @param config.bEthPrice.minValue - lower bound for bEthPrice. Number.NEGATIVE_INFINITY by default.
-   * @param config.bEthPrice.maxDeviations - array of max deviations for bEthPrice relatively to reference value at position with same index.
-   * @param config.bEthRate - contains validations for bEthRate in bEth price info
-   * @param config.bEthRate.maxValue - upper bound for bEthRate. Number.POSITIVE_INFINITY by default.
-   * @param config.bEthRate.minValue - lower bound for bEthRate. Number.NEGATIVE_INFINITY by default.
-   * @param config.bEthRate.maxDeviations - array of max deviations for bEthRate relatively to reference value at position with same index.
-   * @param config.stEthRate - contains validations for stEthRate in bEth price info
-   * @param config.stEthRate.maxValue - upper bound for stEthRate. Number.POSITIVE_INFINITY by default.
-   * @param config.stEthRate.minValue - lower bound for stEthRate. Number.NEGATIVE_INFINITY by default.
-   * @param config.stEthRate.maxDeviations - array of max deviations for stEthRate relatively to reference value at position with same index.
-   * @param config.ethPrice - contains validations for ethPrice in bEth price info
-   * @param config.ethPrice.maxValue - upper bound for ethPrice. Number.POSITIVE_INFINITY by default.
-   * @param config.ethPrice.minValue - lower bound for ethPrice. Number.NEGATIVE_INFINITY by default.
-   * @param config.ethPrice.maxDeviations - array of max deviations for ethPrice relatively to reference value at position with same index.
+   * @param config.bAtomPrice - contains validations for bAtomPrice in bEth price info
+   * @param config.bAtomPrice.maxValue - upper bound for bAtomPrice. Number.POSITIVE_INFINITY by default.
+   * @param config.bAtomPrice.minValue - lower bound for bAtomPrice. Number.NEGATIVE_INFINITY by default.
+   * @param config.bAtomPrice.maxDeviations - array of max deviations for bAtomPrice relatively to reference value at position with same index.
+  //  * @param config.bEthRate - contains validations for bEthRate in bEth price info
+  //  * @param config.bEthRate.maxValue - upper bound for bEthRate. Number.POSITIVE_INFINITY by default.
+  //  * @param config.bEthRate.minValue - lower bound for bEthRate. Number.NEGATIVE_INFINITY by default.
+  //  * @param config.bEthRate.maxDeviations - array of max deviations for bEthRate relatively to reference value at position with same index.
+  //  * @param config.stEthRate - contains validations for stEthRate in bEth price info
+  //  * @param config.stEthRate.maxValue - upper bound for stEthRate. Number.POSITIVE_INFINITY by default.
+  //  * @param config.stEthRate.minValue - lower bound for stEthRate. Number.NEGATIVE_INFINITY by default.
+  //  * @param config.stEthRate.maxDeviations - array of max deviations for stEthRate relatively to reference value at position with same index.
+   * @param config.atomPrice - contains validations for atomPrice in bEth price info
+   * @param config.atomPrice.maxValue - upper bound for atomPrice. Number.POSITIVE_INFINITY by default.
+   * @param config.atomPrice.minValue - lower bound for atomPrice. Number.NEGATIVE_INFINITY by default.
+   * @param config.atomPrice.maxDeviations - array of max deviations for atomPrice relatively to reference value at position with same index.
    */
   constructor(config = {}) {
     const { deviationBlockOffsets = [], ...limits } = config
@@ -48,10 +49,10 @@ export class BEthSafePriceValidator {
   }
 
   /**
-   * Makes validation of bETH price info.
+   * Makes validation of bATOM price info.
    * @param valueBlockNumber - number of block where value was retrieved from
-   * @param value - bETH price info
-   * @param referenceValues - array of bETH price info which used as reference
+   * @param value - bATOM price info
+   * @param referenceValues - array of bATOM price info which used as reference
    * values to calculate deviations of current price
    */
   validate(valueBlockNumber, value, referenceValues) {
@@ -78,13 +79,13 @@ export class BEthSafePriceValidator {
 }
 
 /**
- * Validates one part of bETH price info
+ * Validates one part of bATOM price info
  * according to passed config in the constructor.
  */
 export class AssetSafeValueLimitValidator {
   /**
    * Creates new instance of AssetSafeValueLimitValidator
-   * @param name - name of part of bETH price. Might be one of ethPrice, stEthRate, bEthRate, bEthPrice.
+   * @param name - name of part of bATOM price. Might be one of atomPrice, bAtomPrice.
    * @param config - validation rules
    * @param config.maxValue - upper bound for value. Number.POSITIVE_INFINITY by default.
    * @param config.minValue - lower bound for value.  Number.NEGATIVE_INFINITY by default.
@@ -116,9 +117,9 @@ export class AssetSafeValueLimitValidator {
   }
 
   /**
-   * Makes validation of part of the bETH price info.
+   * Makes validation of part of the bATOM price info.
    * @param valueBlockNumber - number of block where value was retrieved from
-   * @param value - value of bETH price info
+   * @param value - value of bATOM price info
    * @param referenceValues - array of tuples [blockNumber, value of reference value]
    * to calculate deviations of current value
    */

@@ -18,7 +18,7 @@ Feed can use multiple Ethereum JSON-RPC nodes to improve fault-tolerance.
 Example of request:
 
 ```
-curl https://beth-price-feed-staging.psirex.workers.dev \
+curl https://batom-price-feed-staging.psirex.workers.dev \
     -X POST \
     -H "Content-Type: application/json" \
     -d '{"jsonrpc": "2.0", "method": "currentPrice", "id": 1}'

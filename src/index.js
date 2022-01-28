@@ -1,4 +1,4 @@
-import { bEthPriceSafe } from './bEthPrice'
+import { bAtomPriceSafe } from './bAtomPrice'
 import { handleJsonRpcRequests } from './JsonRpcRequestsHandler'
 import { setGlobals } from './globals'
 
@@ -20,15 +20,15 @@ setGlobals({
   ethRpcs: ethRPCs,
   deviationBlockOffsets:
     DEVIATION_BLOCK_OFFSETS && JSON.parse(DEVIATION_BLOCK_OFFSETS),
-  bEthRateLimits: BETH_RATE_LIMITS && JSON.parse(BETH_RATE_LIMITS),
-  bEthPriceLimits: BETH_PRICE_LIMITS && JSON.parse(BETH_PRICE_LIMITS),
-  stEthRateLimits: STETH_RATE_LIMITS && JSON.parse(STETH_RATE_LIMITS),
-  ethPriceLimits: ETH_PRICE_LIMITS && JSON.parse(ETH_PRICE_LIMITS),
+  // bEthRateLimits: BETH_RATE_LIMITS && JSON.parse(BETH_RATE_LIMITS),
+  bAtomPriceLimits: BETH_PRICE_LIMITS && JSON.parse(BETH_PRICE_LIMITS),
+  // stEthRateLimits: STETH_RATE_LIMITS && JSON.parse(STETH_RATE_LIMITS),
+  atomPriceLimits: ETH_PRICE_LIMITS && JSON.parse(ETH_PRICE_LIMITS),
   requestTimeout: REQUEST_TIMEOUT && Number.parseInt(REQUEST_TIMEOUT, 10),
 })
 
 addEventListener('fetch', event => {
   event.respondWith(
-    handleJsonRpcRequests(event.request, { currentPrice: bEthPriceSafe }),
+    handleJsonRpcRequests(event.request, { currentPrice: bAtomPriceSafe }),
   )
 })

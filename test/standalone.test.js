@@ -1,15 +1,15 @@
 import { assert } from 'chai'
 import { setGlobals } from '../src/globals'
-import { getBethPriceSafeStandalone } from '../src/standalone'
+import { getbAtomPriceSafeStandalone } from '../src/standalone'
 
-describe('getBethPriceSafeStandalone', () => {
+describe('getbAtomPriceSafeStandalone', () => {
   it('should resolve latest known price', async () => {
     setGlobals({
       ethRpcs: ['http://127.0.0.1:8545/'],
       requestTimeout: 30000,
     })
 
-    const price = await getBethPriceSafeStandalone()
+    const price = await getbAtomPriceSafeStandalone()
     assert.isDefined(price)
   })
 
@@ -19,7 +19,7 @@ describe('getBethPriceSafeStandalone', () => {
       requestTimeout: 1,
     })
 
-    getBethPriceSafeStandalone()
+    getbAtomPriceSafeStandalone()
       .catch(err => assert.isDefined(err))
       .then(() => {
         // should never arrive here
