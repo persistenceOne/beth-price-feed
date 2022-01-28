@@ -8,7 +8,7 @@ import ChainLinkAtomUsdPriceFeedStub from './contracts/ChainLinkAtomUsdPriceFeed
 
 global.fetch = fetch
 
-const ETH_RPC_NODE = process.env.ETH_RPC_NODE
+const ETH_RPC_NODE = process.env.SECONDARY_RPC
 
 const bAtomPriceFormula = ({ latestAnswer, dy, rate }) =>
   new BigNumber(latestAnswer)
@@ -29,16 +29,20 @@ describe('Test bAtomPriceSafe method', function() {
     provider = new providers.JsonRpcProvider(ETH_RPC_NODE)
     signer = await provider.getSigner(0)
 
+    console.log("signer: ", signer)
+
     const deployedContractStubs = await deployContractStubs(signer)
+    console.log("deployedContractStubs: ", deployedContractStubs)
     // curvePoolStub = deployedContractStubs.curvePoolStub
     // anchorVaultStub = deployedContractStubs.anchorVaultStub
     chainLinkAtomUsdPriceFeedStub =
       deployedContractStubs.chainLinkAtomUsdPriceFeedStub
 
+
     setGlobals({ ethRpcs: [ETH_RPC_NODE] })
     setContractAddresses({
       // curvePoolAddress: curvePoolStub.address,
-      chainLinkAtomUsdPriceFeedAddress: chainLinkAtomUsdPriceFeedStub.address,
+      chainLinkAtomUsdPriceFeedAddress: process.env.CHAINLINK_CONTRACT_ADDRESS,
       // anchorVault: anchorVaultStub.address,
     })
   })

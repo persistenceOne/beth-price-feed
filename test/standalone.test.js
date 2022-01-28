@@ -1,15 +1,15 @@
 import { assert } from 'chai'
 import { setGlobals } from '../src/globals'
-import { getbAtomPriceSafeStandalone } from '../src/standalone'
+import { getBatomPriceSafeStandalone } from '../src/standalone'
 
-describe('getbAtomPriceSafeStandalone', () => {
+describe('getBatomPriceSafeStandalone', () => {
   it('should resolve latest known price', async () => {
     setGlobals({
       ethRpcs: [process.env.ETH_RPCS],
       requestTimeout: 30000,
     })
 
-    const price = await getbAtomPriceSafeStandalone()
+    const price = await getBatomPriceSafeStandalone()
     assert.isDefined(price)
   })
 
@@ -19,7 +19,7 @@ describe('getbAtomPriceSafeStandalone', () => {
       requestTimeout: 1,
     })
 
-    getbAtomPriceSafeStandalone()
+    getBatomPriceSafeStandalone()
       .catch(err => assert.isDefined(err))
       .then(() => {
         // should never arrive here
