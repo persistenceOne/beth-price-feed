@@ -8,6 +8,15 @@ export class Contract {
   }
 
   async makeCall(methodName, params = [], blockNumber = 'latest') {
+    console.log(
+      'this.address: ',
+      this.address,
+      ' this.data: ',
+      this.interface.encodeFunctionData(methodName, params),
+      ' blocknumber: ',
+      blockNumber,
+    )
+
     const res = await ethCall([
       {
         to: this.address,

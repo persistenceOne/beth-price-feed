@@ -3,9 +3,10 @@ import { setGlobals } from '../src/globals'
 import { getBatomPriceSafeStandalone } from '../src/standalone'
 import { Contract } from '../src/Contract'
 
+console.log('TESTING STANDALONE.TEST.JS')
+
 describe('getBatomPriceSafeStandalone', () => {
   it('should resolve latest known price', async () => {
-
     const ChainLinkAtomUsdPriceFeedFactory = address =>
       new Contract({
         address,
@@ -20,17 +21,28 @@ describe('getBatomPriceSafeStandalone', () => {
         ],
       })
 
-    console.log("ChainLinkAtomUsdPriceFeedFactory: ", ChainLinkAtomUsdPriceFeedFactory)
+    console.log(
+      'ChainLinkAtomUsdPriceFeedFactory: ',
+      ChainLinkAtomUsdPriceFeedFactory,
+    )
 
     let ChainLinkAtomUsdPriceFeed = ChainLinkAtomUsdPriceFeedFactory(
       process.env.CHAINLINK_CONTRACT_ADDRESS,
     )
-    console.log("ChainLinkAtomUsdPriceFeed: ", ChainLinkAtomUsdPriceFeed)
+
+    console.log(
+      'ChainLinkAtomUsdPriceFeed: ',
+      ChainLinkAtomUsdPriceFeed.address,
+    )
+    
     const [latestAnswer] = await ChainLinkAtomUsdPriceFeed.makeCall(
       'latestAnswer',
       [],
     )
-    console.log("latestAnswer: ", latestAnswer)
+    console.log('latestAnswer: ', latestAnswer)
+    if (latestAnswer) {
+      latestAnswer
+    }
 
     setGlobals({
       ethRpcs: [process.env.ETH_RPCS],

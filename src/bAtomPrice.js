@@ -4,7 +4,7 @@ import { ethBlockNumber } from './ethNodeRpc'
 import { globals } from './globals'
 
 const CHAINLINK_ATOM_USD_PRICEFEED_CONTRACT =
-  '0x2c3D51c7B454cB045C8cEc92d2F9E717C7519106'
+  process.env.CHAINLINK_CONTRACT_ADDRESS
 
 const ChainLinkAtomUsdPriceFeedFactory = address =>
   new Contract({

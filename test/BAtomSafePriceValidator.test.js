@@ -9,6 +9,7 @@ import {
 } from '../src/BAtomSafePriceValidator'
 
 const ASSET_NAMES = ['bAtomPrice', 'atomPrice']
+console.log('TESTING BATOMSAFEPRICEVALIDATOR.TEST.JS')
 
 const PRICE_INFO = {
   bAtomPrice: new BigNumber(30),

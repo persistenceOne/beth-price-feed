@@ -27,13 +27,12 @@ setGlobals({
   env: ENV,
   sentryProjectId: SENTRY_PROJECT_ID,
   sentryKey: SENTRY_KEY,
-  ethRpcs: (ETH_RPCS),
-  deviationBlockOffsets:
-    DEVIATION_BLOCK_OFFSETS && (DEVIATION_BLOCK_OFFSETS),
+  ethRpcs: ETH_RPCS,
+  deviationBlockOffsets: DEVIATION_BLOCK_OFFSETS && DEVIATION_BLOCK_OFFSETS,
   // bEthRateLimits: BETH_RATE_LIMITS && (BETH_RATE_LIMITS),
-  bAtomPriceLimits: BATOM_PRICE_LIMITS && (BATOM_PRICE_LIMITS),
+  bAtomPriceLimits: BATOM_PRICE_LIMITS && BATOM_PRICE_LIMITS,
   // stEthRateLimits: STETH_RATE_LIMITS && (STETH_RATE_LIMITS),
-  atomPriceLimits: ATOM_PRICE_LIMITS && (ATOM_PRICE_LIMITS),
+  atomPriceLimits: ATOM_PRICE_LIMITS && ATOM_PRICE_LIMITS,
   requestTimeout: REQUEST_TIMEOUT && Number.parseInt(REQUEST_TIMEOUT, 10),
 })
 
