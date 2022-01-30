@@ -1,6 +1,6 @@
 import assert from 'assert'
 import BigNumber from 'bignumber.js'
-import { ContractFactory, ethers } from 'ethers'
+import { ContractFactory, providers } from 'ethers'
 import fetch from 'node-fetch'
 import { bAtomPriceSafe, setContractAddresses } from '../src/bAtomPrice.js'
 import { setGlobals } from '../src/globals'
@@ -8,10 +8,7 @@ import ChainLinkAtomUsdPriceFeedStub from './contracts/ChainLinkAtomUsdPriceFeed
 
 global.fetch = fetch
 
-// const ETH_RPC_NODE = '13.232.9.191:8545'
-const ETH_RPC_NODE = process.env.ETH_RPCS
-const MNEMONIC = process.env.MNEMONIC
-const CHAINLINK_CONTRACT_ADDRESS = process.env.CHAINLINK_CONTRACT_ADDRESS
+const ETH_RPC_NODE = process.env.ETH_RPCS_LOCAL
 
 console.log('TESTING BATOMPRICE.TEST.JS')
 
@@ -24,7 +21,7 @@ const bAtomPriceFormula = ({ latestAnswer, dy, rate }) =>
 
 describe('Test bAtomPriceSafe method', function() {
   this.timeout(50000)
-  /* let signer, chainLinkAtomUsdPriceFeedStub, provider
+  let signer, chainLinkAtomUsdPriceFeedStub, provider
 
   before(async () => {
     provider = new providers.JsonRpcProvider(ETH_RPC_NODE)
@@ -37,30 +34,6 @@ describe('Test bAtomPriceSafe method', function() {
     setGlobals({ ethRpcs: [ETH_RPC_NODE] })
     setContractAddresses({
       chainLinkEthUsdPriceFeedAddress: chainLinkAtomUsdPriceFeedStub.address,
-    })
-  }) */
-
-  let signer,
-    // anchorVaultStub,
-    // curvePoolStub,
-    chainLinkAtomUsdPriceFeedStub,
-    provider
-
-  before(async () => {
-    provider = new ethers.providers.InfuraProvider(
-      'homestead',
-      process.env.API_KEY,
-    )
-    let wallet = ethers.Wallet.froMNEMONIC(MNEMONIC)
-    signer = wallet.connect(provider)
-    const deployedContractStubs = await deployContractStubs(signer)
-    console.log('deployedContractStubs: ', deployedContractStubs)
-    chainLinkAtomUsdPriceFeedStub =
-      deployedContractStubs.chainLinkAtomUsdPriceFeedStub
-
-    setGlobals({ ethRpcs: [ETH_RPC_NODE] })
-    setContractAddresses({
-      chainLinkAtomUsdPriceFeedAddress: CHAINLINK_CONTRACT_ADDRESS,
     })
   })
 
