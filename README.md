@@ -1,17 +1,17 @@
-# bETH/USD JSON-RPC Price Feed
+# bATOM/USD JSON-RPC Price Feed
 
-Repository contains implementation of bETH/USD JSON-RPC Price Feed.
+Repository contains implementation of bATOM/USD JSON-RPC Price Feed.
 Price feed built as Cloudflare's worker.
 
 ## Overview
 
-Worker contains `currentPrice` method which returns current bETH price in USD rounded to 8 decimal places.
+Worker contains `currentPrice` method which returns current bATOM price in USD rounded to 8 decimal places.
 
-bETH price calculation based on a next formula: `bETHPrice = ethPrice * stETHRate / bETHRate`, where:
+bATOM price calculation based on a next formula: `bETHPrice = ethPrice * stETHRate / bETHRate`, where:
 
 - `ethPrice` - current ETH/USD price retrieved from the Chainlink's ETH/USD feed contract
 - `stETHRate` - current stETH/ETH spot price retrieved from the Curve stETH pool contract
-- `bETHRate` - current stETH/bETH rate retrieved from the AnchorVault contract. Always greater than or equal 1.
+- `bETHRate` - current stETH/bATOM rate retrieved from the AnchorVault contract. Always greater than or equal 1.
 
 Feed can use multiple Ethereum JSON-RPC nodes to improve fault-tolerance.
 
@@ -34,9 +34,9 @@ Example of response:
 }
 ```
 
-## bETH Safe Price Validation
+## bATOM Safe Price Validation
 
-For the resulting bETH price value (`bETHPrice`) and for each value of: `ethPrice`, `stETHRate`, `bETHRate` might be added validations to check that values belong to the allowed range. For each of the above values might be set next validations:
+For the resulting bATOM price value (`bETHPrice`) and for each value of: `ethPrice`, `stETHRate`, `bETHRate` might be added validations to check that values belong to the allowed range. For each of the above values might be set next validations:
 
 - `maxValue` - maximum value which might be reached
 - `minValue` - minimum value which might be reached
@@ -164,7 +164,7 @@ Navigate to root directory of the project and run `npm install` command
 
 ### Project Build
 
-Run `npm run build` command to build the current version of bETH price feed.
+Run `npm run build` command to build the current version of bATOM price feed.
 
 ### Development Server
 
