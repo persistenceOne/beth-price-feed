@@ -7,11 +7,11 @@ Price feed built as Cloudflare's worker.
 
 Worker contains `currentPrice` method which returns current bATOM price in USD rounded to 8 decimal places.
 
-bATOM price calculation based on a next formula: `bETHPrice = ethPrice * stETHRate / bETHRate`, where:
+bATOM price calculation based on a next formula: `bATOMPrice = ethPrice * stETHRate / bATOMRate`, where:
 
 - `ethPrice` - current ETH/USD price retrieved from the Chainlink's ETH/USD feed contract
 - `stETHRate` - current stETH/ETH spot price retrieved from the Curve stETH pool contract
-- `bETHRate` - current stETH/bATOM rate retrieved from the AnchorVault contract. Always greater than or equal 1.
+- `bATOMRate` - current stETH/bATOM rate retrieved from the AnchorVault contract. Always greater than or equal 1.
 
 Feed can use multiple Ethereum JSON-RPC nodes to improve fault-tolerance.
 
@@ -36,21 +36,21 @@ Example of response:
 
 ## bATOM Safe Price Validation
 
-For the resulting bATOM price value (`bETHPrice`) and for each value of: `ethPrice`, `stETHRate`, `bETHRate` might be added validations to check that values belong to the allowed range. For each of the above values might be set next validations:
+For the resulting bATOM price value (`bATOMPrice`) and for each value of: `ethPrice`, `stETHRate`, `bATOMRate` might be added validations to check that values belong to the allowed range. For each of the above values might be set next validations:
 
 - `maxValue` - maximum value which might be reached
 - `minValue` - minimum value which might be reached
 - `maxDeviations` - an array of max deviations in percent. Each element will be compared to element from reference values array at the same index.
 
-Reference values - it's an array of values of `bETHPrice`, `ethPrice`, `stETHRate` and `bETHRate` taken from different blocks. The number of such reference values and block numbers where to retrieve values from might be set via ENV variable `DEVIATION_BLOCK_OFFSETS` in wrangler.toml file.
+Reference values - it's an array of values of `bATOMPrice`, `ethPrice`, `stETHRate` and `bATOMRate` taken from different blocks. The number of such reference values and block numbers where to retrieve values from might be set via ENV variable `DEVIATION_BLOCK_OFFSETS` in wrangler.toml file.
 `DEVIATION_BLOCK_OFFSETS` must contain a valid JSON array of numbers (empty array is allowed).
 
 Example of `DEVIATION_BLOCK_OFFSETS` value: `[10000, 1000, 100]` - use three points as reference values, with block numbers: `[currentBlockNumber - 10000, currentBlockNumber - 1000, currentBlockNumber - 100]`.
 
-Validations for values `bETHPrice`, `ethPrice`, `stETHRate` and `bETHRate` might be set via next corresponding ENV variables in wrangler.toml file:
+Validations for values `bATOMPrice`, `ethPrice`, `stETHRate` and `bATOMRate` might be set via next corresponding ENV variables in wrangler.toml file:
 
-- `BETH_RATE_LIMITS`
-- `BETH_PRICE_LIMITS`
+- `BATOM_RATE_LIMITS`
+- `BATOM_PRICE_LIMITS`
 - `STETH_RATE_LIMITS`
 - `ETH_PRICE_LIMITS`
 
@@ -64,24 +64,24 @@ Each of these variables must contain a valid JSON string of next type:
 }
 ```
 
-Example of declaration of validations for `BETH_PRICE_LIMITS` in wrangler.toml file:
+Example of declaration of validations for `BATOM_PRICE_LIMITS` in wrangler.toml file:
 
 ```
-BETH_PRICE_LIMITS = '{"maxValue":3100,"minValue":"3000","deviations":[20.5,15,5]}'
+BATOM_PRICE_LIMITS = '{"maxValue":3100,"minValue":"3000","deviations":[20.5,15,5]}'
 ```
 
-which requires that the value `bETHPrice` variable contains in the range [3000,3100], and deviation from reference blocks less than 20.5 % for value with zero index, 15 with index equal to one, and 5 % with index three.
+which requires that the value `bATOMPrice` variable contains in the range [3000,3100], and deviation from reference blocks less than 20.5 % for value with zero index, 15 with index equal to one, and 5 % with index three.
 
 When some validation of price safety fails, an error will be returned instead of a default response.
 
-Example of response with an error when `bETHPrice`'s max value validation failed:
+Example of response with an error when `bATOMPrice`'s max value validation failed:
 
 ```json
 {
   "jsonrpc": "2.0",
   "id": null,
   "error": {
-    "message": "Unsafe Price: value of \"bEthPrice\" too high",
+    "message": "Unsafe Price: value of \"bAtomPrice\" too high",
     "code": -40001,
     "data": {
       "maxValue": "3100",
@@ -91,14 +91,14 @@ Example of response with an error when `bETHPrice`'s max value validation failed
 }
 ```
 
-Example of response with an error when `bETHPrice`'s min value validation failed:
+Example of response with an error when `bATOMPrice`'s min value validation failed:
 
 ```json
 {
   "jsonrpc": "2.0",
   "id": null,
   "error": {
-    "message": "Unsafe Price: value of \"bEthPrice\" too low",
+    "message": "Unsafe Price: value of \"bAtomPrice\" too low",
     "code": -40002,
     "data": {
       "minValue": "3400",
@@ -108,14 +108,14 @@ Example of response with an error when `bETHPrice`'s min value validation failed
 }
 ```
 
-Example of response with an error when `bETHPrice`'s max deviation validation failed:
+Example of response with an error when `bATOMPrice`'s max deviation validation failed:
 
 ```json
 {
   "jsonrpc": "2.0",
   "id": null,
   "error": {
-    "message": "Unsafe Price: Max deviation of \"bEthPrice\" exceeded",
+    "message": "Unsafe Price: Max deviation of \"bAtomPrice\" exceeded",
     "code": -40003,
     "data": {
       "maxDeviation": "2",
