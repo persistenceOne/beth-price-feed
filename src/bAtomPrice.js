@@ -2,8 +2,16 @@ import BigNumber from 'bignumber.js'
 import { Contract } from './Contract'
 import { ethBlockNumber } from './ethNodeRpc'
 import { globals } from './globals'
+import { getContractInstance} from "../actions/utils"
 
-const CHAINLINK_ATOM_USD_PRICEFEED_CONTRACT =
+import Web3 from 'web3';
+
+//import {abi } from "../abi/abi.json"
+
+const newProvider = () => new Web3.providers.WebsocketProvider(process.env.PRIMARY_RPC);
+let web3 = new Web3(newProvider());
+
+/*const CHAINLINK_ATOM_USD_PRICEFEED_CONTRACT =
   process.env.CHAINLINK_CONTRACT_ADDRESS
 
 const ChainLinkAtomUsdPriceFeedFactory = address =>
@@ -18,17 +26,17 @@ const ChainLinkAtomUsdPriceFeedFactory = address =>
         type: 'function',
       },
     ],
-  })
+  })*/
 
-let ChainLinkAtomUsdPriceFeed = ChainLinkAtomUsdPriceFeedFactory(
+/*let ChainLinkAtomUsdPriceFeed = ChainLinkAtomUsdPriceFeedFactory(
   CHAINLINK_ATOM_USD_PRICEFEED_CONTRACT,
 )
 
 export function setContractAddresses(addresses) {
   ChainLinkAtomUsdPriceFeed = ChainLinkAtomUsdPriceFeedFactory(
-    addresses.chainLinkAtomUsdPriceFeedAddress,
+    addresses.chainLinkEthUsdPriceFeedAddress,
   )
-}
+}*/
 
 /**
  * Provides current price of bAtom token with safety validations.
@@ -78,11 +86,19 @@ async function bAtomPriceInfo(blockNumber) {
  * Calls method latestAnswer on ChainLink contract with ETH/USD pair
  * @returns Current ETH price in USD rounded to 8 digits
  */
+// eslint-disable-next-line no-unused-vars
 async function getAtomPrice(blockNumber) {
-  const [latestAnswer] = await ChainLinkAtomUsdPriceFeed.makeCall(
+  let getData = await getContractInstance(process.env.abi, process.env.CHAINLINK_CONTRACT_ADDRESS)
+  console.log("getData: ", getData)
+
+  let getLatestAnswer = await getData.methods.latestAnswer().call();
+  console.log("getLatestAnswer: ", getLatestAnswer)
+  return getLatestAnswer;
+
+ /* const [latestAnswer] = await ChainLinkAtomUsdPriceFeed.makeCall(
     'latestAnswer',
     [],
     blockNumber,
   )
-  return new BigNumber(latestAnswer.toString()).div(1e8)
+  return new BigNumber(latestAnswer.toString()).div(1e8)*/
 }

@@ -7,17 +7,18 @@ console.log('TESTING STANDALONE.TEST.JS')
 describe('getBatomPriceSafeStandalone', () => {
   it('should resolve latest known price', async () => {
     setGlobals({
-      ethRpcs: [process.env.ETH_RPCS_LOCAL],
+      ethRpcs: [process.env.ETH_RPCS],
       requestTimeout: 30000,
     })
 
     const price = await getBatomPriceSafeStandalone()
+    console.log("price: ", price)
     assert.isDefined(price)
   })
 
   it('should throw upon timeout', async () => {
     setGlobals({
-      ethRpcs: [process.env.ETH_RPCS_LOCAL],
+      ethRpcs: [process.env.ETH_RPCS],
       requestTimeout: 1,
     })
 

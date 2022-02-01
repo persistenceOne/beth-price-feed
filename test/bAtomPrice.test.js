@@ -23,6 +23,8 @@ describe('Test bAtomPriceSafe method', function() {
   this.timeout(50000)
   let signer, chainLinkAtomUsdPriceFeedStub, provider
 
+
+
   before(async () => {
     provider = new providers.JsonRpcProvider(ETH_RPC_NODE)
     signer = await provider.getSigner(0)
