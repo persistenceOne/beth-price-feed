@@ -1,7 +1,7 @@
 workers_dev = true
 type = "javascript"
 name = "batom-price-feed-dev"
-account_id = ""
+account_id = "a3a193f983b581d1a73f4a984e117029"
 
 [vars]
 ENV = "development"

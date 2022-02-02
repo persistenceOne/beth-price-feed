@@ -3,8 +3,7 @@ import { Contract } from './Contract'
 import { ethBlockNumber } from './ethNodeRpc'
 import { globals } from './globals'
 
-const CHAINLINK_ATOM_USD_PRICEFEED_CONTRACT =
-  process.env.CHAINLINK_CONTRACT_ADDRESS
+
 
 const ChainLinkAtomUsdPriceFeedFactory = address =>
   new Contract({
@@ -21,7 +20,7 @@ const ChainLinkAtomUsdPriceFeedFactory = address =>
   })
 
 let ChainLinkAtomUsdPriceFeed = ChainLinkAtomUsdPriceFeedFactory(
-  CHAINLINK_ATOM_USD_PRICEFEED_CONTRACT,
+  '0x736E09DE064A2a461F197643A26bC1ab7Dc4D5D3',
 )
 
 export function setContractAddresses(addresses) {
@@ -38,7 +37,7 @@ export function setContractAddresses(addresses) {
 export async function bAtomPriceSafe() {
   const { deviationBlockOffsets, bAtomSafePriceValidator } = globals
   const [currentPriceInfo, currentBlockHex] = await Promise.all([
-    bAtomPriceInfo(14094995),
+    bAtomPriceInfo(),
     ethBlockNumber(),
   ])
   const referenceValues = await Promise.all(

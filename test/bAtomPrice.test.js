@@ -8,14 +8,14 @@ import ChainLinkAtomUsdPriceFeedStub from './contracts/ChainLinkAtomUsdPriceFeed
 
 global.fetch = fetch
 
-const ETH_RPC_NODE = process.env.ETH_RPCS_LOCAL
+const ETH_RPC_NODE = 'http://127.0.0.1:8545/'
 
 console.log('TESTING BATOMPRICE.TEST.JS')
 
 const bAtomPriceFormula = ({ latestAnswer, dy, rate }) =>
   new BigNumber(latestAnswer)
-    .multipliedBy(dy)
-    .dividedBy(rate)
+    // .multipliedBy(dy)
+    // .dividedBy(rate)
     .dividedBy(1e8)
     .toFixed(8)
 
@@ -28,12 +28,11 @@ describe('Test bAtomPriceSafe method', function() {
     signer = await provider.getSigner(0)
 
     const deployedContractStubs = await deployContractStubs(signer)
-    chainLinkAtomUsdPriceFeedStub =
-      deployedContractStubs.chainLinkAtomUsdPriceFeedStub
-
+    chainLinkAtomUsdPriceFeedStub = deployedContractStubs.chainLinkAtomUsdPriceFeedStub
+    console.log(deployedContractStubs);
     setGlobals({ ethRpcs: [ETH_RPC_NODE] })
     setContractAddresses({
-      chainLinkEthUsdPriceFeedAddress: chainLinkAtomUsdPriceFeedStub.address,
+      chainLinkAtomUsdPriceFeedAddress: chainLinkAtomUsdPriceFeedStub.address,
     })
   })
 
