@@ -8,14 +8,14 @@ import ChainLinkAtomUsdPriceFeedStub from './contracts/ChainLinkAtomUsdPriceFeed
 
 global.fetch = fetch
 
-const ETH_RPC_NODE = 'http://127.0.0.1:8545/'
+const ETH_RPC_NODE = process.env.PRIMARY_RPC
 
 console.log('TESTING BATOMPRICE.TEST.JS')
 
 const bAtomPriceFormula = ({ latestAnswer, dy, rate }) =>
   new BigNumber(latestAnswer)
-    // .multipliedBy(dy)
-    // .dividedBy(rate)
+    .multipliedBy(dy)
+    .dividedBy(rate)
     .dividedBy(1e8)
     .toFixed(8)
 
@@ -25,7 +25,7 @@ describe('Test bAtomPriceSafe method', function() {
 
   before(async () => {
     provider = new providers.JsonRpcProvider(ETH_RPC_NODE)
-    signer = await provider.getSigner(0)
+    signer = provider.getSigner(0)
 
     const deployedContractStubs = await deployContractStubs(signer)
     chainLinkAtomUsdPriceFeedStub = deployedContractStubs.chainLinkAtomUsdPriceFeedStub
@@ -46,7 +46,7 @@ describe('Test bAtomPriceSafe method', function() {
         // rate: bigRandom(1e18, 3e18), // value in range [1, 3]
       }
       console.log(`Iteration #${i + 1}`)
-      console.log('ETH Price:', formatBigNumber(testCase.latestAnswer, 8))
+      console.log('ATOM Price:', formatBigNumber(testCase.latestAnswer, 8))
       // console.log("Curve's Pool DY:", formatBigNumber(testCase.dy))
       // console.log('stETH/bAtom rate:', formatBigNumber(testCase.rate))
       await Promise.all([

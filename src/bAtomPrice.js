@@ -19,6 +19,7 @@ const ChainLinkAtomUsdPriceFeedFactory = address =>
     ],
   })
 
+
 let ChainLinkAtomUsdPriceFeed = ChainLinkAtomUsdPriceFeedFactory(
   '0x736E09DE064A2a461F197643A26bC1ab7Dc4D5D3',
 )
@@ -40,6 +41,7 @@ export async function bAtomPriceSafe() {
     bAtomPriceInfo(),
     ethBlockNumber(),
   ])
+  console.log(deviationBlockOffsets);
   const referenceValues = await Promise.all(
     deviationBlockOffsets
       .map(offset => currentBlockHex - offset)
@@ -49,12 +51,13 @@ export async function bAtomPriceSafe() {
       ]),
   )
 
+
   bAtomSafePriceValidator.validate(
     Number(currentBlockHex),
     currentPriceInfo,
     referenceValues,
   )
-
+  console.log('bAtomPriceSafe:', currentPriceInfo.bAtomPrice);
   return currentPriceInfo.bAtomPrice.toFixed(8)
 }
 

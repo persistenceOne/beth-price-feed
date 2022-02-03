@@ -14,31 +14,21 @@ try {
     SENTRY_PROJECT_ID,
     SENTRY_KEY,
     DEVIATION_BLOCK_OFFSETS,
-    // BETH_RATE_LIMITS,
-    BATOM_PRICE_LIMITS,
-    // STETH_RATE_LIMITS,
-    ATOM_PRICE_LIMITS,
     ETH_RPCS,
     REQUEST_TIMEOUT,
-    CHAINLINK_CONTRACT_ADDRESS,
   } = process.env
 } catch (e) {
   console.error(e)
 }
-
 setGlobals({
   env: ENV,
   sentryProjectId: SENTRY_PROJECT_ID,
   sentryKey: SENTRY_KEY,
   ethRpcs: ethRPCs,
-  deviationBlockOffsets:
-    DEVIATION_BLOCK_OFFSETS && JSON.parse(DEVIATION_BLOCK_OFFSETS),
-  // bEthRateLimits: BETH_RATE_LIMITS && JSON.parse(BETH_RATE_LIMITS),
-  bAtomPriceLimits: BATOM_PRICE_LIMITS && JSON.parse(BATOM_PRICE_LIMITS),
-  // stEthRateLimits: STETH_RATE_LIMITS && JSON.parse(STETH_RATE_LIMITS),
-  atomPriceLimits: ATOM_PRICE_LIMITS && JSON.parse(ATOM_PRICE_LIMITS),
+  deviationBlockOffsets: DEVIATION_BLOCK_OFFSETS && DEVIATION_BLOCK_OFFSETS,
+  bAtomPriceLimits: BATOM_PRICE_LIMITS && BATOM_PRICE_LIMITS,
+  atomPriceLimits: ATOM_PRICE_LIMITS && ATOM_PRICE_LIMITS,
   requestTimeout: REQUEST_TIMEOUT && Number.parseInt(REQUEST_TIMEOUT, 10),
-  chainLinkContractAddress: CHAINLINK_CONTRACT_ADDRESS,
 })
 
 addEventListener('fetch', event => {

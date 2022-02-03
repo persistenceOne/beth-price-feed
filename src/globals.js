@@ -16,9 +16,7 @@ export function setGlobals({
   sentryKey,
   ethRpcs,
   deviationBlockOffsets,
-  // bAtomRateLimits,
   bAtomPriceLimits,
-  // stEthRateLimits,
   atomPriceLimits,
   requestTimeout,
 }) {
@@ -30,9 +28,7 @@ export function setGlobals({
     deviationBlockOffsets || globals.deviationBlockOffsets
   globals.bAtomSafePriceValidator = new BAtomSafePriceValidator({
     deviationBlockOffsets,
-    // bAtomRate: bAtomRateLimits,
     bAtomPrice: bAtomPriceLimits,
-    // stEthRate: stEthRateLimits,
     atomPrice: atomPriceLimits,
   })
   globals.requestTimeout = requestTimeout || globals.requestTimeout
