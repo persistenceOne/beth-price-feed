@@ -41,7 +41,6 @@ export async function bAtomPriceSafe() {
     bAtomPriceInfo(),
     ethBlockNumber(),
   ])
-  console.log(deviationBlockOffsets);
   const referenceValues = await Promise.all(
     deviationBlockOffsets
       .map(offset => currentBlockHex - offset)
@@ -57,7 +56,6 @@ export async function bAtomPriceSafe() {
     currentPriceInfo,
     referenceValues,
   )
-  console.log('bAtomPriceSafe:', currentPriceInfo.bAtomPrice);
   return currentPriceInfo.bAtomPrice.toFixed(8)
 }
 
