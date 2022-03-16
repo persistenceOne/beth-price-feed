@@ -25,14 +25,14 @@ setGlobals({
   env: ENV,
   sentryProjectId: SENTRY_PROJECT_ID,
   sentryKey: SENTRY_KEY,
-  ethRpcs: ETH_RPCS,
-  deviationBlockOffsets: DEVIATION_BLOCK_OFFSETS && DEVIATION_BLOCK_OFFSETS,
-  bAtomPriceLimits: BATOM_PRICE_LIMITS && BATOM_PRICE_LIMITS,
-  atomPriceLimits: ATOM_PRICE_LIMITS && ATOM_PRICE_LIMITS,
+  ethRpcs: JSON.parse(ETH_RPCS),
+  deviationBlockOffsets:
+    DEVIATION_BLOCK_OFFSETS && JSON.parse(DEVIATION_BLOCK_OFFSETS),
+  bAtomPriceLimits: BATOM_PRICE_LIMITS && JSON.parse(BATOM_PRICE_LIMITS),
+  atomPriceLimits: ATOM_PRICE_LIMITS && JSON.parse(ATOM_PRICE_LIMITS),
   requestTimeout: REQUEST_TIMEOUT && Number.parseInt(REQUEST_TIMEOUT, 10),
 })
 
 export const getBatomPriceSafeStandalone = () => {
-  console.log();
   return bAtomPriceSafe()
 }
